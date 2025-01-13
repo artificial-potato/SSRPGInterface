@@ -8,12 +8,12 @@ class SSRPGInterface:
         self.step=None
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     def callcommand(self,*args):
-        self.client.send(";".join(args).encode('utf-8'))
+        self.client.send('\x1f'.join(args).encode('utf-8'))
         data = self.client.recv(1024)
         if data.decode("utf-8")=="cmd_executed":
             return
     def call(self,*args):
-        self.client.send(";".join(args).encode('utf-8'))
+        self.client.send('\x1f'.join(args).encode('utf-8'))
         data = self.client.recv(1024)
         print(data.decode('utf-8'))
         return data.decode('utf-8')[4:]
