@@ -30,7 +30,6 @@ def teststep():
             ssrpgIF.callcommand("activate","R")
         print(str(ssrpgIF.call("item.GetCooldown","skeleton_arm"))+" "+str(ssrpgIF.call("item.CanActivate","skeleton_arm")))
     ssrpgIF.callcommand(">","`1,"+str(ssrpgIF.y)+","+"hello python!"+time.ctime())
-    ssrpgIF.eof()
 
 def teststep2():
     os.system("cls")
@@ -38,7 +37,6 @@ def teststep2():
     print("SSRPGpy:")
     for i in range(h):
         print("".join(ret[w*i:w*(i+1)]))
-    ssrpgIF.eof()
 
 def teststep3():
 #    ssrpgIF.y=(ssrpgIF.y+1)%30
@@ -56,8 +54,8 @@ def teststep3():
     print(str(ssrpgIF.call("item.GetCooldown","skeleton_arm"))+" "+str(ssrpgIF.call("item.CanActivate","skeleton_arm"))+"          ")
 #    ssrpgIF.callcommand(">","`1,"+str(ssrpgIF.y)+","+"hello python!"+time.ctime())
     print(ssrpgIF.getScreen(15,7,30,15))
-    ssrpgIF.eof()
     cursor_up(h+3)
+    
 test_inst=[["draw.GetSymbol",15+xy[1],7+xy[0]] for xy in itertools.product(range(h),range(w))]
 ssrpgIF.inst=test_inst
 ssrpgIF.step=teststep3
