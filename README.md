@@ -33,8 +33,8 @@ Use the `SSRPGInterface` class to communicate with SSRPG. Refer to `SSRPGtest.py
 ssrpg = SSRPGInterface()
 ```
 
-#### step Method
-
+#### step (member function)
+Field to store your custom program to run every frame.
 Assign a function to be executed at each step.
 
 ```python
@@ -44,7 +44,7 @@ def teststep():
 ssrpg.step = teststep
 ```
 
-#### run Method
+#### run()
 
 Execute the `step()` method in a loop and start communication with SSRPG.
 
@@ -52,7 +52,7 @@ Execute the `step()` method in a loop and start communication with SSRPG.
 ssrpg.run()
 ```
 
-#### callcommand Method
+#### callcommand(str command, str parameter)
 
 Execute a command in StoneScript.
 
@@ -60,7 +60,7 @@ Execute a command in StoneScript.
 ssrpg.callcommand(">", "hello python!")
 ```
 
-#### call Method
+#### call(str variable/function[, parameter1, parameter2,...])
 
 Get a variable or execute a function in StoneScript. Return values are automatically converted to appropriate Python types (`bool`, `int` or `str`).
 
@@ -69,7 +69,7 @@ foe = ssrpg.call("foe")
 symbol = ssrpg.call("draw.GetSymbol", 1, 1)
 ```
 
-#### multcall Method
+#### multcall([[str var1/func1,...],[str var2/func2,...],...])
 
 Get multiple variables or execute multiple functions in StoneScript. Return values are lists of `str`.
 
