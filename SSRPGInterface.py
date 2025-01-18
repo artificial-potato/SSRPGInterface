@@ -5,6 +5,7 @@ class SSRPGInterface:
         self.host="127.0.0.1"
         self.port=12312
         self.step=None
+        self.ver_ack='\x06'+"0.1"
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     def sloppy_cast(self,_str):
         if _str=="":
@@ -60,7 +61,7 @@ class SSRPGInterface:
         return res
 
     def eof(self):
-        self.client.send("EOF".encode('utf-8'))
+        self.client.send('\x03'.encode('utf-8'))
     def run(self):
         if self.step==None:
             print("step() is none")
@@ -69,9 +70,9 @@ class SSRPGInterface:
             try:
                 while True:
                     data = self.client.recv(1024)
-                    if "step:v0.1"==data.decode('utf-8'):
+                    if self.ver_ack==data.decode('utf-8'):
                         self.step()
-                    elif "step" in data.decode('utf-8'):
+                    elif '\x06' in data.decode('utf-8'):
                         print("warn:wrong version")
                         self.step()
                     else:
