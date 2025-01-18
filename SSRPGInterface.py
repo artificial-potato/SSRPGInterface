@@ -1,8 +1,9 @@
 """
 SSRPGInterface Python Library v0.1
+(for MindConnectProtocol v0.1)
 
 Released under the MIT license
-Copyright ArtificialPotato and other contributeors
+Copyright 2025 ArtificialPotato and contributors
 https://github.com/artificial-potato/SSRPGInterface/blob/main/LICENSE
 """
 import socket
