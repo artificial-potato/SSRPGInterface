@@ -2,9 +2,9 @@
 python interface for SSRPG(commexp)
 tested on Python 3.10.7 (win32)
 
-- SSRPGInterface.py
+- SSRPGInterface.py :
 main script for the interface
-- SSRPGtest.py
+- SSRPGtest.py :
 a script to test communication
 
 
@@ -15,11 +15,13 @@ a script to test communication
 4. `python SSRPGtest.py`
 
 # How to write custom scripts
-SSRPGInterface
-- `SSRPGInterface()`
+use SSRPGInterface class to communicate with SSRPG
+see SSRPGtest.py and following to get the usage
+
+- `SSRPGInterface()`:
 constructor of SSRPGInterface
 
-- `SSRPGInterface.step`
+- `SSRPGInterface.step`:
 a member function of SSRPGInterface
 should be assign a function to be executed at each step 
 must end with `SSRPGInterface.eof()`.
@@ -31,17 +33,18 @@ def teststep():
 ssrpg.step=teststep
 ```
 
-- `SSRPGInterface.run()`
+- `SSRPGInterface.run()`:
 execute step() and start communication with SSRPG
 `ssrpg.run()`
 
-- `SSRPGInterface.callcommand(command, parameter)`
+- `SSRPGInterface.callcommand(command, parameter)`:
 execute a command of stonescript
 example:
 `ssrpg.callcommand(">","hello python!")`
 
-- `SSRPGInterface.call(var or function[,parameter1,parameter2...])`
+- `SSRPGInterface.call(var or function[,parameter1,parameter2...])`:
 get variable or function(parameter) of stonescript
+Return values like bool are returned in bool, like int are returned in int, and all others are returned in str
 example:
 `foe=ssrpg.call("foe")`
 `symbol=ssrpg.call("draw.GetSymbol",1,1)`
