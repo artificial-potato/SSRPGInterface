@@ -3,7 +3,7 @@ import itertools
 class SSRPGInterface:
     def __init__(self):
         self.host="127.0.0.1"
-        self.port=12312
+        self.port=64649
         self.step=None
         self.ver_ack='\x06'+"0.1"
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -77,6 +77,7 @@ class SSRPGInterface:
                         self.step()
                     else:
                         print("error")
+                        return
             except ConnectionAbortedError:
                 print("connection closed")
                 return
