@@ -31,9 +31,7 @@ def teststep():
         if ssrpgIF.call("foe.distance") < 8 and ssrpgIF.call("item.CanActivate", "skeleton_arm"):
             ssrpgIF.callcommand("activate", "R")
         print(str(ssrpgIF.call("item.GetCooldown", "skeleton_arm")) + " " + str(ssrpgIF.call("item.CanActivate", "skeleton_arm")))
-    
-    # End of frame
-    ssrpgIF.eof()
+
 
 # Assign the test step function to the interface
 ssrpgIF.step = teststep
