@@ -1,67 +1,75 @@
+
 # SSRPGInterface
-python interface for SSRPG(commexp)
 
-tested on Python 3.10.7 (win32)
+SSRPGInterface is a Python interface for SSRPG (commexp).
 
-### SSRPGInterface.py :
-main script for the interface
-### SSRPGtest.py :
-a script to test communication
+## Tested Environment
 
+- Python 3.10.7 (win32)
 
-## How to use the example (SSRPGtest.py)
-1. launch SSRPG(commexp)
-2. enable mindstone, erase all and put `sys.MindConnect()`
-3. go to some location
-4. `python SSRPGtest.py`
+## Files
 
-## How to write custom scripts
-use SSRPGInterface class to communicate with SSRPG
+- **SSRPGInterface.py**: Main script for the interface.
+- **SSRPGtest.py**: A script to test communication.
 
-see SSRPGtest.py and following to get the usage
+## How to Use the Example (SSRPGtest.py)
 
-### `SSRPGInterface()`:
-constructor of SSRPGInterface
+1. Launch SSRPG (commexp).
+2. Enable mindstone, erase all, and put `sys.MindConnect()`.
+3. Go to some location.
+4. Run the script: `python SSRPGtest.py`.
 
-### `SSRPGInterface.step`:
-a member function of SSRPGInterface
+## Writing Custom Scripts
 
-should be assign a function to be executed at each step 
+Use the `SSRPGInterface` class to communicate with SSRPG. Refer to `SSRPGtest.py` for usage examples.
 
-must end with `SSRPGInterface.eof()`.
+### SSRPGInterface Class
 
+#### Constructor
+
+```python
+ssrpg = SSRPGInterface()
 ```
-ssrpg=SSRPGInterface()
+
+#### step Method
+
+Assign a function to be executed at each step.
+
+```python
 def teststep():
-    ssrpg.callcommand("equip","arm")
+    ssrpg.callcommand("equip", "arm")
     ssrpg.eof()
-ssrpg.step=teststep
+
+ssrpg.step = teststep
 ```
 
-### `SSRPGInterface.run()`:
-execute step() and start communication with SSRPG
+#### run Method
 
-`ssrpg.run()`
+Execute the `step()` method and start communication with SSRPG.
 
-### `SSRPGInterface.callcommand(command, parameter)`:
-execute a command of stonescript
+```python
+ssrpg.run()
+```
 
-example:
+#### callcommand Method
 
-`ssrpg.callcommand(">","hello python!")`
+Execute a command in StoneScript.
 
-### `SSRPGInterface.call(var or function[,parameter1,parameter2...])`:
-get variable or function(parameter) of stonescript
+```python
+ssrpg.callcommand(">", "hello python!")
+```
 
-Return values like bool are returned in bool, like int are returned in int, and all others are returned in str
+#### call Method
 
-example:
+Get a variable or execute a function in StoneScript. Return values are automatically converted to appropriate Python types (`bool`, `int` or `str`).
 
-`foe=ssrpg.call("foe")`
+```python
+foe = ssrpg.call("foe")
+symbol = ssrpg.call("draw.GetSymbol", 1, 1)
+```
 
-`symbol=ssrpg.call("draw.GetSymbol",1,1)`
+## Limitations
 
-## Limitation
-- Cannot use StoneScriptObjects like ui.panel
-- Cannot be used at the same time as stonescript
-- Protocols and interfaces are likely to change as they are currently in the experimental phase
+- Cannot use StoneScriptObjects like `ui.panel`.
+- Cannot be used simultaneously with StoneScript.
+- Protocols and interfaces are experimental and subject to change.
