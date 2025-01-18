@@ -1,3 +1,10 @@
+"""
+SSRPGInterface Python Library v0.1
+
+Released under the MIT license
+Copyright ArtificialPotato and other contributeors
+https://github.com/artificial-potato/SSRPGInterface/blob/main/LICENSE
+"""
 import socket
 import itertools
 
