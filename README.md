@@ -74,7 +74,7 @@ symbol = ssrpg.call("draw.GetSymbol", 1, 1)
 Get multiple variables or execute multiple functions in StoneScript. Return values are lists of `str`.
 
 ```python
-foe, loc, foe_debuff,symbol11 = ssrpg.multcall([["foe"],["loc"],["foe.debuffs.string"],["draw.GetSymbol", 1, 1]])
+foe, loc, foe_debuff, symbol11 = ssrpg.multcall([["foe"],["loc"],["foe.debuffs.string"],["draw.GetSymbol", 1, 1]])
 ```
 
 ## Limitations
