@@ -33,7 +33,7 @@ Use the `SSRPGInterface` class to communicate with SSRPG. Refer to `SSRPGtest.py
 ssrpg = SSRPGInterface()
 ```
 
-#### step (member function)
+#### step
 Field to store your custom program to run every frame.
 Assign a function to be executed at each step.
 
