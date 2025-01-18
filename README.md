@@ -38,7 +38,6 @@ Assign a function to be executed at each step.
 ```python
 def teststep():
     ssrpg.callcommand("equip", "arm")
-    ssrpg.eof()
 
 ssrpg.step = teststep
 ```
