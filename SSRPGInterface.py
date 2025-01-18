@@ -73,7 +73,7 @@ class SSRPGInterface:
                 elif type(args[i][j] == str):
                     sendstring += '\x1f' + "s" + '\x1f' + args[i][j]
         self.client.send(sendstring.encode('utf-8'))
-        data = self.client.recv(8192)
+        data = self.client.recv(65536)
         return data.decode('utf-8').split('\x1f')[1:]
 
     def getScreen(self, x, y, w, h):
