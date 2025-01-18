@@ -46,7 +46,7 @@ ssrpg.step = teststep
 
 #### run Method
 
-Execute the `step()` method and start communication with SSRPG.
+Execute the `step()` method in a loop and start communication with SSRPG.
 
 ```python
 ssrpg.run()

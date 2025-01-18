@@ -61,7 +61,7 @@ class SSRPGInterface:
 
     def multcall(self, args):
         """
-        Call multiple functions or get multiple variables from the server.
+        Call multiple functions or get multiple variables from SSRPG.
         """
         num = len(args)
         sendstring = str(num)
@@ -78,7 +78,7 @@ class SSRPGInterface:
 
     def getScreen(self, x, y, w, h):
         """
-        Get the screen content from the server.
+        Get the screen content from SSRPG.
         """
         inst = [["draw.GetSymbol", x + xy[1], y + xy[0]] for xy in itertools.product(range(h), range(w))]
         res = self.multcall(inst)
@@ -88,7 +88,7 @@ class SSRPGInterface:
 
     def eof(self):
         """
-        End of frame.
+        Notify SSRPG of step completion.
         """
         self.client.send('\x03'.encode('utf-8'))
 
