@@ -74,3 +74,11 @@ symbol = ssrpg.call("draw.GetSymbol", 1, 1)
 - Cannot use StoneScriptObjects like `ui.panel`.
 - Cannot be used simultaneously with StoneScript.
 - Protocols and interfaces are experimental and subject to change.
+
+## To-do list for this project (SSRPG side and interface side mixed)
+[ ] Improvement and documentation of the protocol
+[ ] Support for simultaneous use with stonescript
+[ ] Support for communication with non-loopbacks
+[ ] Update README.md
+[ ] Support for types other than int, bool, str
+[ ] Create interfaces for other languages (if strongly requested)
