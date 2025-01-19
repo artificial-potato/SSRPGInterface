@@ -106,7 +106,7 @@ class SSRPGInterface:
                     data = self.client.recv(1024)
                     if '\x06' in data.decode('utf-8'):
                         if self.ack_ver != data.decode('utf-8'):
-                            print("warn:wrong version")
+                            print("Warning: version mismatch")
                         self.step()
                         self.eof()
                     else:
