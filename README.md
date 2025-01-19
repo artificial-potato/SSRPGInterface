@@ -88,6 +88,7 @@ foe, loc, foe_debuff, symbol11 = ssrpg.multi_call([["foe"],["loc"],["foe.debuffs
 - [ ] Improvement and documentation of the protocol
 - [ ] Support for simultaneous use with stonescript
 - [ ] Support for communication with non-loopbacks
+- [ ] Easy-to-use aliases for commands (like SSRPGInterface.print(str), SSRPGInterface.equip(str), ...)
 - [ ] Update README.md
 - [ ] Support for types other than int, bool, str
 - [ ] Create interfaces for other languages (if strongly requested)
