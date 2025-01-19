@@ -14,7 +14,7 @@ class SSRPGInterface:
         self.host = "127.0.0.1"
         self.port = 64649
         self.step = None
-        self.ack_ver = '\x06' + "0.1"
+        self.ACK_VER = '\x06' + "0.1"
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.client.settimeout(10)
 
@@ -107,7 +107,7 @@ class SSRPGInterface:
                 while True:
                     data = self.client.recv(1024)
                     if '\x06' in data.decode('utf-8'):
-                        if self.ack_ver != data.decode('utf-8'):
+                        if self.ACK_VER != data.decode('utf-8'):
                             print("Warning: version mismatch")
                         self.step()
                         self.eof()
