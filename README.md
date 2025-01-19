@@ -57,6 +57,9 @@ ssrpg.run()
 
 Execute a command in StoneScript.
 
+Valid commands are as follows:
+`{ ">" , "play" , "equipR" , "equipL", "equip", "loadout", "activate", "enable", "disable", "brew"}`
+
 ```python
 ssrpg.call_command(">", "hello python!")
 ```
