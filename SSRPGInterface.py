@@ -77,7 +77,7 @@ class SSRPGInterface:
         data = self.client.recv(65536)
         return data.decode('utf-8').split('\x1f')[1:]
 
-    def getScreen(self, x, y, w, h):
+    def get_screen(self, x, y, w, h):
         """
         Get the screen content from SSRPG.
         """
