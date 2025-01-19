@@ -6,8 +6,11 @@ Released under the MIT license
 Copyright 2025 ArtificialPotato and contributors
 https://github.com/artificial-potato/SSRPGInterface/blob/main/LICENSE
 """
+import sys
 import socket
 import itertools
+import time
+import atexit
 
 class SSRPGInterface:
     def __init__(self):
@@ -17,6 +20,9 @@ class SSRPGInterface:
         self.ACK_VER = '\x06' + "0.1"
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.client.settimeout(10)
+        
+        self.connecting = False
+        atexit.register(self.close)
 
     def sloppy_cast(self, _str):
         """
@@ -95,25 +101,60 @@ class SSRPGInterface:
         """
         self.client.send('\x03'.encode('utf-8'))
 
-    def run(self):
+    def run(self, step=None):
         """
         Start the interface and execute the step function in a loop.
         """
         if self.step is None:
-            print("step() is none")
+            if callable(step):
+                self.step = step
+            else:
+                print("step() is none")
         else:
-            self.client.connect((self.host, self.port))
-            try:
-                while True:
+            self.connect()
+            while True:
+                try:
                     data = self.client.recv(1024)
-                    if '\x06' in data.decode('utf-8'):
-                        if self.ACK_VER != data.decode('utf-8'):
-                            print("Warning: version mismatch")
-                        self.step()
-                        self.eof()
-                    else:
-                        print("error")
-                        return
-            except ConnectionAbortedError:
-                print("connection closed")
-                return
+                except TimeoutError: # Error when the game is paused
+                    print("Operation timeout")
+                    continue
+                except ConnectionAbortedError:
+                    print("connection closed")
+                    self.close()
+                    return
+
+                if '\x06' in data.decode('utf-8'):
+                    if self.ACK_VER != data.decode('utf-8'):
+                        print("Warning: version mismatch")
+                    self.step()
+                    self.eof()
+                else:
+                    print("error")
+                    return
+                
+    def connect(self):
+        print("Start Connect SSRPG")
+        while True:
+            print("\r                    ", end="")
+            print("\r", end="")
+            try:
+                self.client.connect((self.host, self.port))
+                print("\rConnect Success")
+                self.connecting = True
+                return True
+            except TimeoutError:
+                print("\rConnect Timeout", end="")
+            except ConnectionRefusedError:
+                print("\rConnect Refused", end="")
+
+            # retry after 5 seconds
+            for i in range(5):
+                print(".", end="")
+                sys.stdout.flush()
+                time.sleep(1)
+    
+    def close(self):
+        if self.connecting:
+            self.client.close()
+            self.connecting = False
+            print("Close Connect")
