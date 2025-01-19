@@ -1,9 +1,13 @@
 
 # SSRPGInterface
 
-SSRPGInterface is a Python interface for SSRPG (commexp).
+SSRPGInterface is a Python interface for SSRPG (4.9.1 or above).
 
 by: ArtificialPotato (Discord @artificial.potato)
+
+
+https://github.com/user-attachments/assets/e0e0cc8f-4d13-4915-849d-6b7e3069729e
+
 
 ## Tested Environment
 
@@ -16,7 +20,7 @@ by: ArtificialPotato (Discord @artificial.potato)
 
 ## How to Use the Example (SSRPGtest.py)
 
-1. Launch SSRPG (commexp).
+1. Launch SSRPG (4.9.1 or above).
 2. Enable mindstone, erase all, and put `sys.MindConnect()`.
 3. Go to some location.
 4. Run the script: `python SSRPGtest.py`.
