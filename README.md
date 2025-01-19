@@ -11,7 +11,7 @@ by: ArtificialPotato (Discord @artificial.potato)
 
 ## Files
 
-- **SSRPGInterface.py**: Main script for the interface.
+- **ssrpgif.py**: Main script (module) for the interface.
 - **SSRPGtest.py**: A script to test communication.
 
 ## How to Use the Example (SSRPGtest.py)
