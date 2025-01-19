@@ -30,6 +30,7 @@ Use the `SSRPGInterface` class to communicate with SSRPG. Refer to `SSRPGtest.py
 #### Constructor
 
 ```python
+from ssrpgif import SSRPGInterface
 ssrpg = SSRPGInterface()
 ```
 
