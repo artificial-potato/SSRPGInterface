@@ -43,7 +43,7 @@ class SSRPGInterface:
         if data.decode("utf-8")[2:] == "cmd_done":
             return
 
-    def call(self, *args):
+    def call(self, *args, raw=False):
         """
         Call a function or get a variable from SSRPG.
         """
@@ -58,6 +58,8 @@ class SSRPGInterface:
                 return
         self.client.send(sendstring.encode('utf-8'))
         data = self.client.recv(1024)
+        if raw:
+            return data.decode('utf-8')[2:]
         return self.sloppy_cast(data.decode('utf-8')[2:])
 
     def multi_call(self, args):
