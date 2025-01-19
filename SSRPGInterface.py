@@ -16,6 +16,7 @@ class SSRPGInterface:
         self.step = None
         self.ack_ver = '\x06' + "0.1"
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.client.settimeout(10)
 
     def sloppy_cast(self, _str):
         """
