@@ -39,7 +39,7 @@ Assign a function to be executed at each step.
 
 ```python
 def teststep():
-    ssrpg.callcommand("equip", "arm")
+    ssrpg.call_command("equip", "arm")
 
 ssrpg.step = teststep
 ```
@@ -52,12 +52,12 @@ Execute the `step()` method in a loop and start communication with SSRPG.
 ssrpg.run()
 ```
 
-#### callcommand(str command, str parameter)
+#### call_command(str command, str parameter)
 
 Execute a command in StoneScript.
 
 ```python
-ssrpg.callcommand(">", "hello python!")
+ssrpg.call_command(">", "hello python!")
 ```
 
 #### call(str variable/function[, parameter1, parameter2,...])
@@ -69,12 +69,12 @@ foe = ssrpg.call("foe")
 symbol = ssrpg.call("draw.GetSymbol", 1, 1)
 ```
 
-#### multcall([[str var1/func1,...],[str var2/func2,...],...])
+#### multi_call([[str var1/func1,...],[str var2/func2,...],...])
 
 Get multiple variables or execute multiple functions in StoneScript. Return values are lists of `str`.
 
 ```python
-foe, loc, foe_debuff, symbol11 = ssrpg.multcall([["foe"],["loc"],["foe.debuffs.string"],["draw.GetSymbol", 1, 1]])
+foe, loc, foe_debuff, symbol11 = ssrpg.multi_call([["foe"],["loc"],["foe.debuffs.string"],["draw.GetSymbol", 1, 1]])
 ```
 
 ## Limitations

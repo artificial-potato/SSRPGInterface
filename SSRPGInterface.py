@@ -34,7 +34,7 @@ class SSRPGInterface:
             return -1 * int(_str[1:])
         return _str
 
-    def callcommand(self, *args):
+    def call_command(self, *args):
         """
         Send a command to SSRPG.
         """
@@ -60,7 +60,7 @@ class SSRPGInterface:
         data = self.client.recv(1024)
         return self.sloppy_cast(data.decode('utf-8')[2:])
 
-    def multcall(self, args):
+    def multi_call(self, args):
         """
         Call multiple functions or get multiple variables from SSRPG.
         """
@@ -82,7 +82,7 @@ class SSRPGInterface:
         Get the screen content from SSRPG.
         """
         inst = [["draw.GetSymbol", x + xy[1], y + xy[0]] for xy in itertools.product(range(h), range(w))]
-        res = self.multcall(inst)
+        res = self.multi_call(inst)
         res = ["".join(res[w * i:w * (i + 1)]) for i in range(h)]
         res = "\n".join(res)
         return res

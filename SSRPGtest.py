@@ -10,13 +10,13 @@ def teststep():
     if ssrpgIF.call("loc.begin"):
         ssrpgIF.y = 0
         # Execute the command to brew tar + wood
-        ssrpgIF.callcommand("brew", "tar + wood")
+        ssrpgIF.call_command("brew", "tar + wood")
     
     # Update y coordinate
     ssrpgIF.y = (ssrpgIF.y + 1) % 30
     
     # Send a command with the y coordinate and current time
-    ssrpgIF.callcommand(">", "`1," + str(ssrpgIF.y) + "," + "hello python!" + time.ctime())
+    ssrpgIF.call_command(">", "`1," + str(ssrpgIF.y) + "," + "hello python!" + time.ctime())
     
     # Print the foe and its distance
     print("foe:" + ssrpgIF.call("foe"))
@@ -24,12 +24,12 @@ def teststep():
     
     # Equip different items based on the foe type
     if "boss" in ssrpgIF.call("foe"):
-        ssrpgIF.callcommand("equipR", "sword")
-        ssrpgIF.callcommand("equipL", "hammer")
+        ssrpgIF.call_command("equipR", "sword")
+        ssrpgIF.call_command("equipL", "hammer")
     else:
-        ssrpgIF.callcommand("equip", "arm")
+        ssrpgIF.call_command("equip", "arm")
         if ssrpgIF.call("foe.distance") < 8 and ssrpgIF.call("item.CanActivate", "skeleton_arm"):
-            ssrpgIF.callcommand("activate", "R")
+            ssrpgIF.call_command("activate", "R")
         print(str(ssrpgIF.call("item.GetCooldown", "skeleton_arm")) + " " + str(ssrpgIF.call("item.CanActivate", "skeleton_arm")))
 
 
