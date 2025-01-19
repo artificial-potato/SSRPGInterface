@@ -1,4 +1,4 @@
-from SSRPGInterface import SSRPGInterface
+from ssrpgif import SSRPGInterface
 import time
 
 # Initialize the SSRPGInterface
