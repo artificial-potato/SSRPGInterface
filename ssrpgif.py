@@ -1,5 +1,5 @@
 """
-SSRPGInterface Python Library v0.1
+SSRPGInterface Python Library v0.11
 (for MindConnectProtocol v0.1)
 
 Released under the MIT license
@@ -8,6 +8,8 @@ https://github.com/artificial-potato/SSRPGInterface/blob/main/LICENSE
 """
 import socket
 import itertools
+import time
+import atexit
 
 class SSRPGInterface:
     def __init__(self):
@@ -17,6 +19,9 @@ class SSRPGInterface:
         self.ACK_VER = '\x06' + "0.1"
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.client.settimeout(10)
+        
+        self.connected = False
+        atexit.register(self.close)
 
     def sloppy_cast(self, _str):
         """
@@ -95,25 +100,66 @@ class SSRPGInterface:
         """
         self.client.send('\x03'.encode('utf-8'))
 
-    def run(self):
+    def run(self, step=None):
         """
         Start the interface and execute the step function in a loop.
         """
-        if self.step is None:
-            print("step() is none")
+        if not (callable(self.step) or callable(step)):
+            print("step() is not callable")
+            return #for clarity
         else:
-            self.client.connect((self.host, self.port))
-            try:
-                while True:
+            if step!=None:
+                if callable(step):
+                    self.step = step
+                else:
+                    print("The argument step is not callable")
+                    return
+
+            self.connect()
+            while True:
+                try:
                     data = self.client.recv(1024)
-                    if '\x06' in data.decode('utf-8'):
-                        if self.ACK_VER != data.decode('utf-8'):
-                            print("Warning: version mismatch")
-                        self.step()
-                        self.eof()
-                    else:
-                        print("error")
-                        return
-            except ConnectionAbortedError:
-                print("connection closed")
-                return
+                except TimeoutError: # Error when the game is paused
+                    print("Connection timed out")
+                    continue
+                except ConnectionAbortedError:
+                    print("Connection closed")
+                    self.close()
+                    return
+                
+                if '\x06' in data.decode('utf-8'):
+                    if self.ACK_VER != data.decode('utf-8'):
+                        print("Warning: version mismatch")
+                    self.step()
+                    self.eof()
+                else:
+                    print("error")
+                    return
+                
+    def connect(self):
+        print("Connecting to SSRPG")
+        while True:
+            try:
+                self.client.connect((self.host, self.port))
+                print("Connected")
+                self.connected = True
+                return True
+            except TimeoutError:
+                print("Connection timed out")
+            except ConnectionRefusedError:
+                print("Connection Refused")
+
+            # retry after 5 seconds
+            for i in range(5):
+                print("Retry in {} seconds".format(5-i))
+                time.sleep(1)
+    
+    def close(self):
+        if self.connected:
+            try:
+                self.client.send('\x03'.encode('utf-8'))
+            except:
+                pass
+            self.client.close()
+            self.connected = False
+            print("Connection closed")
