@@ -1,40 +1,54 @@
-from ssrpgif import SSRPGInterface
-import time
+"""
+WARNING: The file needs to be in the same directory as the SSRPGInterface folder. 
+"""
 
-# Initialize the SSRPGInterface
-ssrpgIF = SSRPGInterface()
+from SSRPGInterface.commands import *
+from SSRPGInterface import *
+import time
 
 # Define the test step function
 def teststep():
     # Check ?loc.begin
-    if ssrpgIF.call("loc.begin"):
-        ssrpgIF.y = 0
+    if call("loc.begin"):
+        y = 0
         # Execute the command to brew tar + wood
-        ssrpgIF.call_command("brew", "tar + wood")
+        call_command("brew", "tar + wood")
     
     # Update y coordinate
-    ssrpgIF.y = (ssrpgIF.y + 1) % 30
+    y = (y + 1) % 30
     
     # Send a command with the y coordinate and current time
-    ssrpgIF.call_command(">", "`1," + str(ssrpgIF.y) + "," + "hello python!" + time.ctime())
+    call_command(">", "`1," + str(y) + "," + "hello python!" + time.ctime())
     
     # Print the foe and its distance
-    print("foe:" + ssrpgIF.call("foe"))
-    print("foe.distance:" + str(ssrpgIF.call("foe.distance")))
+    print("foe:" + call("foe"))
+    print("foe.distance:" + str(call("foe.distance")))
     
     # Equip different items based on the foe type
-    if "boss" in ssrpgIF.call("foe"):
-        ssrpgIF.call_command("equipR", "sword")
-        ssrpgIF.call_command("equipL", "hammer")
+    if "boss" in call("foe"):
+        call_command("equipR", "sword")
+        call_command("equipL", "hammer")
     else:
-        ssrpgIF.call_command("equip", "arm")
-        if ssrpgIF.call("foe.distance") < 8 and ssrpgIF.call("item.CanActivate", "skeleton_arm"):
-            ssrpgIF.call_command("activate", "R")
-        print(str(ssrpgIF.call("item.GetCooldown", "skeleton_arm")) + " " + str(ssrpgIF.call("item.CanActivate", "skeleton_arm")))
+        call_command("equip", "arm")
+        if call("foe.distance") < 8 and call("item.CanActivate", "skeleton_arm"):
+            call_command("activate", "R")
+        print(str(call("item.GetCooldown", "skeleton_arm")) + " " + str(call("item.CanActivate", "skeleton_arm")))
+
+def battle_test():
+	if item.left.state() == 3:
+		command.EquipL("sword")
+	if item.right.state() == 3:
+		command.EquipR("shield")
+	
+	if foe.distance() < 24:
+		command.Equip("arm")
+	else:
+		command.EquipL("trisk")
+		command.EquipR("compound")
+
+	print(f"\r{hp()}/{maxhp()} {armor()}/{maxarmor()} {item.left.state()} {item.right.state()}", end="")
 
 
-# Assign the test step function to the interface
-ssrpgIF.step = teststep
-
-# Run the interface
-ssrpgIF.run()
+if __name__ == "__main__":
+    # Run the interface
+    run_script(teststep)

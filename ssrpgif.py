@@ -6,160 +6,176 @@ Released under the MIT license
 Copyright 2025 ArtificialPotato and contributors
 https://github.com/artificial-potato/SSRPGInterface/blob/main/LICENSE
 """
+import sys
 import socket
 import itertools
 import time
 import atexit
 
-class SSRPGInterface:
-    def __init__(self):
-        self.host = "127.0.0.1"
-        self.port = 64649
-        self.step = None
-        self.ACK_VER = '\x06' + "0.1"
-        self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.client.settimeout(10)
-        
-        self.connected = False
-        atexit.register(self.close)
+DELIMITER = "\x1f"
+ACK_VER = '\x06' + "0.1"
 
-    def sloppy_cast(self, _str):
-        """
-        Convert string to appropriate type.
-        """
-        if _str == "":
-            return _str
-        elif _str == "True":
+client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+client.settimeout(10)
+
+connecting = False
+
+def send(str_list) -> None:
+    client.send(DELIMITER.join(str_list).encode('utf-8'))
+
+def param_process(arg) -> list[str, str]:
+    if arg is None:
+        return None
+    if type(arg) is int:
+        return ["i", str(arg)]
+    if type(arg) is bool:
+        return ["s", "True" if arg else "False"]
+    if type(arg) is str:
+        return ["s", arg]
+    
+def command_process(name, args) -> list[str]:
+    send_str_list = [str(len(args)), name]
+    for arg in args:
+        send_arg_str_list = param_process(arg)
+        if send_arg_str_list is None:
+            print(f"Call {name} Command Error. args: {args}")
+            return None
+        send_str_list += send_arg_str_list
+    return send_str_list
+
+def sloppy_cast(_str):
+    """
+    Convert string to appropriate type.
+    """
+
+    if _str == "":
+        return ""
+    elif _str == "True":
+        return True
+    elif _str == "False":
+        return False
+    elif _str.isdecimal():
+        return int(_str)
+    elif _str[0] == "-" and _str[1:].isdecimal():
+        return -1 * int(_str[1:])
+    return _str
+
+def call_command(name:str, *args):
+    """
+    Send a command to SSRPG.
+    """
+
+    if len(args) == 1 and type(args[0]) == list:
+        args = args[0]
+    send(["1", name] + list(args))
+    data = client.recv(1024)
+    if data.decode("utf-8")[2:] == "cmd_done":
+        return
+
+def call(name:str, *args):
+    """
+    Call a function or get a variable from SSRPG.
+    """
+
+    send_str_list = command_process(name, args)
+    if send_str_list is None:
+        return
+    send_str_list = ["1"] + send_str_list
+
+    send(send_str_list)
+    data = client.recv(1024)
+    return data.decode('utf-8')[2:]
+
+def multi_call(command_dict:dict):
+    """
+    Call multiple functions or get multiple variables from SSRPG.
+    """
+
+    send_str_list = [str(len(command_dict))]
+    for name, args in command_dict.items():
+        command_send_str_list = command_process(name, args)
+        if command_send_str_list is None:
+            return
+        send_str_list += command_send_str_list
+
+    send(send_str_list)
+    data = client.recv(65536)
+    return data.decode('utf-8').split(DELIMITER)[1:]
+
+def get_screen(x, y, w, h):
+    """
+    Get the screen content from SSRPG.
+    """
+    inst = [["draw.GetSymbol", x + xy[1], y + xy[0]] for xy in itertools.product(range(h), range(w))]
+    res = multi_call(inst)
+    res = ["".join(res[w * i:w * (i + 1)]) for i in range(h)]
+    res = "\n".join(res)
+    return res
+
+def connect(host="127.0.0.1", port=64649):
+    global connecting
+    print("Start Connect SSRPG")
+    while True:
+        print("\rConnecting          ", end="")
+        print("\r", end="")
+        try:
+            client.connect((host, port))
+            print("\rConnect Success")
+            connecting = True
             return True
-        elif _str == "False":
-            return False
-        elif _str.isdecimal():
-            return int(_str)
-        elif _str[0] == "-" and _str[1:].isdecimal():
-            return -1 * int(_str[1:])
-        return _str
+        except TimeoutError:
+            print("\rConnect Timeout", end="")
+        except ConnectionRefusedError:
+            print("\rConnect Refused", end="")
 
-    def call_command(self, *args):
-        """
-        Send a command to SSRPG.
-        """
-        self.client.send(("1" + '\x1f' + '\x1f'.join(args)).encode('utf-8'))
-        data = self.client.recv(1024)
-        if data.decode("utf-8")[2:] == "cmd_done":
+        # retry after 5 seconds
+        for i in range(5):
+            print(".", end="")
+            sys.stdout.flush()
+            time.sleep(1)
+
+def eof():
+    """
+    Notify SSRPG of step completion.
+    """
+    client.send('\x03'.encode('utf-8'))
+
+def close():
+    global connecting
+    if connecting:
+        client.close()
+        connecting = False
+        print("Close Connect")
+
+def run(step, host="127.0.0.1", port=64649):
+    """
+    Start the interface and execute the step function in a loop.
+    """
+
+    atexit.register(close)
+    connect(host, port)
+
+    while True:
+        try:
+            data = client.recv(1024)
+        except TimeoutError: # Error when the game is paused
+            print("\rOperation timeout", end="")
+            continue
+        except ConnectionAbortedError:
+            print("\nConnection Closed")
+            close()
+            return
+        except Exception:
+            print(Exception)
+            print("An unexpected error occurred, exiting the program")
+            close()
             return
 
-    def call(self, *args, raw=False):
-        """
-        Call a function or get a variable from SSRPG.
-        """
-        sendstring = "1" + '\x1f' + str(len(args) - 1) + '\x1f' + args[0]
-        for i in range(1, len(args)):
-            if type(args[i]) == int:
-                sendstring += '\x1f' + "i" + '\x1f' + str(args[i])
-            elif type(args[i] == str):
-                sendstring += '\x1f' + "s" + '\x1f' + args[i]
-            else:
-                print("callerr")
-                return
-        self.client.send(sendstring.encode('utf-8'))
-        data = self.client.recv(1024)
-        if raw:
-            return data.decode('utf-8')[2:]
-        return self.sloppy_cast(data.decode('utf-8')[2:])
-
-    def multi_call(self, args):
-        """
-        Call multiple functions or get multiple variables from SSRPG.
-        """
-        num = len(args)
-        sendstring = str(num)
-        for i in range(num):
-            sendstring += '\x1f' + str(len(args[i]) - 1) + '\x1f' + args[i][0]
-            for j in range(1, len(args[i])):
-                if type(args[i][j]) == int:
-                    sendstring += '\x1f' + "i" + '\x1f' + str(args[i][j])
-                elif type(args[i][j] == str):
-                    sendstring += '\x1f' + "s" + '\x1f' + args[i][j]
-        self.client.send(sendstring.encode('utf-8'))
-        data = self.client.recv(65536)
-        return data.decode('utf-8').split('\x1f')[1:]
-
-    def get_screen(self, x, y, w, h):
-        """
-        Get the screen content from SSRPG.
-        """
-        inst = [["draw.GetSymbol", x + xy[1], y + xy[0]] for xy in itertools.product(range(h), range(w))]
-        res = self.multi_call(inst)
-        res = ["".join(res[w * i:w * (i + 1)]) for i in range(h)]
-        res = "\n".join(res)
-        return res
-
-    def eof(self):
-        """
-        Notify SSRPG of step completion.
-        """
-        self.client.send('\x03'.encode('utf-8'))
-
-    def run(self, step=None):
-        """
-        Start the interface and execute the step function in a loop.
-        """
-        if not (callable(self.step) or callable(step)):
-            print("step() is not callable")
-            return #for clarity
+        if '\x06' in data.decode('utf-8'):
+            if ACK_VER != data.decode('utf-8'):
+                print("Warning: version mismatch")
+            step()
+            eof()
         else:
-            if step!=None:
-                if callable(step):
-                    self.step = step
-                else:
-                    print("The argument step is not callable")
-                    return
-
-            self.connect()
-            while True:
-                try:
-                    data = self.client.recv(1024)
-                except TimeoutError: # Error when the game is paused
-                    print("Connection timed out")
-                    continue
-                except ConnectionAbortedError:
-                    print("Connection closed")
-                    self.close()
-                    return
-                
-                if '\x06' in data.decode('utf-8'):
-                    if self.ACK_VER != data.decode('utf-8'):
-                        print("Warning: version mismatch")
-                    self.step()
-                    self.eof()
-                else:
-                    print("error")
-                    return
-                
-    def connect(self):
-        print("Connecting to SSRPG")
-        while True:
-            try:
-                self.client.connect((self.host, self.port))
-                print("Connected")
-                self.connected = True
-                return True
-            except TimeoutError:
-                print("Connection timed out")
-            except ConnectionRefusedError:
-                print("Connection Refused")
-
-            # retry after 5 seconds
-            for i in range(5):
-                print("Retry in {} seconds".format(5-i))
-                time.sleep(1)
-    
-    def close(self):
-        if self.connected:
-            try:
-                self.client.send('\x03'.encode('utf-8'))
-            except:
-                pass
-            self.client.close()
-            self.connected = False
-            print("Connection closed")
+            print("error")
+            return
