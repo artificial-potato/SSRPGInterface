@@ -131,3 +131,12 @@ loc = Loc()
 
 The current location the player is visiting.
 """
+
+def totaltime() -> int:
+	"""
+	`totaltime`
+	
+	The current frame number of the location, accumulated in case of boss sub-location.
+	"""
+
+	return int(call("totaltime"))

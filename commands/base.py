@@ -1,4 +1,4 @@
-from ..ssrpgif import call
+from ..cache import call
 
 class Base():
 	def __init__(self, class_name):

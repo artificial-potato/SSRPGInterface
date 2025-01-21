@@ -30,3 +30,5 @@ class Pos(Base):
 		The player's current Z position.
 		"""
 		return int(self.call("z"))
+	
+pos = Pos()

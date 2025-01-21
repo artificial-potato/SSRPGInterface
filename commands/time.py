@@ -104,10 +104,3 @@ time = Time()
 
 The current frame number of the location.
 """
-
-def totaltime() -> int:
-	"""
-	`totaltime`
-	
-	The current frame number of the location, accumulated in case of boss sub-location.
-	"""

@@ -12,6 +12,8 @@ import itertools
 import time
 import atexit
 
+from .cache import preload
+
 DELIMITER = "\x1f"
 ACK_VER = '\x06' + "0.1"
 
@@ -64,7 +66,6 @@ def call_command(name:str, *args):
     """
     Send a command to SSRPG.
     """
-
     if len(args) == 1 and type(args[0]) == list:
         args = args[0]
     send(["1", name] + list(args))
@@ -86,14 +87,14 @@ def call(name:str, *args):
     data = client.recv(1024)
     return data.decode('utf-8')[2:]
 
-def multi_call(command_dict:dict):
+def multi_call(command_list:list):
     """
     Call multiple functions or get multiple variables from SSRPG.
     """
 
-    send_str_list = [str(len(command_dict))]
-    for name, args in command_dict.items():
-        command_send_str_list = command_process(name, args)
+    send_str_list = [str(len(command_list))]
+    for command in command_list:
+        command_send_str_list = command_process(command[0], command[1:])
         if command_send_str_list is None:
             return
         send_str_list += command_send_str_list
@@ -174,6 +175,7 @@ def run(step, host="127.0.0.1", port=64649):
         if '\x06' in data.decode('utf-8'):
             if ACK_VER != data.decode('utf-8'):
                 print("Warning: version mismatch")
+            preload()
             step()
             eof()
         else:
