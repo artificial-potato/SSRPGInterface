@@ -1,41 +1,62 @@
 from . import ssrpgif
-command_cache = {}
+cache_dict = {}
 """
 ```
 {
-	index( (name,) + args ): cache,
+	(name,) + args + (return_type,) : data,
 	...
 }
 ```
 """
+
+def get_cache(key):
+	return cache_dict.get(key, None)
+
+def set_cache(data, key):
+	cache_dict[key] = data
+
+
+
 preload_index = []
+keep_preload_index = []
+exclude_preload_index = []
 
 def preload():
-	command_cache.clear()
+	cache_dict.clear()
 
-	command_list = [index for index in preload_index]
+	command_list = [
+		{
+			"name": index[0],
+			"args": index[1: -1],
+			"return_type": index[-1]
+		}
+		for index in keep_preload_index + preload_index
+	]
 	multi_call(command_list)
 
 	preload_index.clear()
 
-def get_cache(key):
-	return command_cache.get(key, None)
+def add_preload_index(index):
+	if index in exclude_preload_index:
+		return
+	if index in keep_preload_index:
+		return
+	preload_index.append(index)
 
-def set_cache(data, key):
-	command_cache[key] = data
 
 
-def call(name:str, *args):
-	index = (name,) + args
+def call(name:str, *args, return_type=None):
+	index = (name,) + args + (return_type,)
+
 	data = get_cache(index)
 	if not data is None:
-		preload_index.append(index)
+		add_preload_index(index)
 		return data
 		
-	data = ssrpgif.call(name, *args)
-	
+	data = ssrpgif.call(name, *args, return_type=return_type)
+
 	if not data is None:
-		preload_index.append(index)
+		add_preload_index(index)
 		set_cache(data, index)
 
 	return data
@@ -51,6 +72,7 @@ def multi_call(command_list:list, check_cache:bool=False):
 			if not cmd_data is None:
 				result[i] = cmd_data
 				finish[i] = True
+
 		new_command_list = []
 		for i in range(len(finish)):
 			if finish is False:
@@ -61,18 +83,35 @@ def multi_call(command_list:list, check_cache:bool=False):
 
 	result_index = 0
 	for data in data_list:
+		if not False in finish:
+			break
+		result_index = finish.index(False, result_index)
+		finish[result_index] = True
+
 		if data is None:
 			continue
 		if data == "cmd_done":
 			continue
 
-		if not False in finish:
-			break
-		result_index = finish.index(False, result_index)
-
 		result[result_index] = data
-		finish[result_index] = True
 
-		set_cache(data, command_list[result_index])
+		command = command_list[result_index]
+		index = (command["name"],) + command["args"] + (command["return_type"],)
+		set_cache(data, index)
 
 	return result
+
+
+
+action_command_list = []
+
+def call_command(name:str, *args):
+	action_command_list.append({
+		"name": name,
+		"args": args
+	})
+
+def run_command():
+	if action_command_list:
+		ssrpgif.multi_call_command(action_command_list)
+		action_command_list.clear()

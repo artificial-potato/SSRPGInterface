@@ -11,7 +11,7 @@ class Pos(Base):
 
 		The player's current X position.
 		"""
-		return int(self.call("x"))
+		return self.call("x", return_type=int)
 
 	# pos.y
 	def y(self) -> int:
@@ -20,7 +20,7 @@ class Pos(Base):
 
 		The player's current Y position.
 		"""
-		return int(self.call("y"))
+		return self.call("y", return_type=int)
 
 	# pos.z
 	def z(self) -> int:
@@ -29,6 +29,6 @@ class Pos(Base):
 
 		The player's current Z position.
 		"""
-		return int(self.call("z"))
+		return self.call("z", return_type=int)
 	
 pos = Pos()

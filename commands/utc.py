@@ -6,27 +6,27 @@ class UTC(Base):
 	
 	# utc.year
 	def year(self) -> int:
-		return int(self.call("year"))
+		return self.call("year", return_type=int)
 	
 	# utc.month
 	def month(self) -> int:
-		return int(self.call("month"))
+		return self.call("month", return_type=int)
 	
 	# utc.day
 	def day(self) -> int:
-		return int(self.call("day"))
+		return self.call("day", return_type=int)
 	
 	# utc.hour
 	def hour(self) -> int:
-		return int(self.call("hour"))
+		return self.call("hour", return_type=int)
 	
 	# utc.minute
 	def minute(self) -> int:
-		return int(self.call("minute"))
+		return self.call("minute", return_type=int)
 	
 	# utc.second
 	def second(self) -> int:
-		return int(self.call("second"))
+		return self.call("second", return_type=int)
 	
 	
 utc = UTC()

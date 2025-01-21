@@ -6,27 +6,27 @@ class RES(Base):
 	
 	# res.stone
 	def stone(self) -> int:
-		return int(self.call("stone"))
+		return self.call("stone", return_type=int)
 	
 	# res.wood
 	def wood(self) -> int:
-		return int(self.call("wood"))
+		return self.call("wood", return_type=int)
 	
 	# res.tar
 	def tar(self) -> int:
-		return int(self.call("tar"))
+		return self.call("tar", return_type=int)
 	
 	# res.ki
 	def ki(self) -> int:
-		return int(self.call("ki"))
+		return self.call("ki", return_type=int)
 	
 	# res.bronze
 	def bronze(self) -> int:
-		return int(self.call("bronze"))
+		return self.call("bronze", return_type=int)
 	
 	# res.crystals
 	def crystals(self) -> int:
-		return int(self.call("crystals"))
+		return self.call("crystals", return_type=int)
 	
 res = RES()
 """

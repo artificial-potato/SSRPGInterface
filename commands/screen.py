@@ -11,7 +11,7 @@ class Screen(Base):
 
 		The screen's position in-game, as an index that increses when the player reaches the right-side and it slides over.
 		"""
-		return int(self.call("i"))
+		return self.call("i", return_type=int)
 	
 	# screen.x
 	def x(self) -> int:
@@ -20,7 +20,7 @@ class Screen(Base):
 
 		The screen's position in-game.
 		"""
-		return int(self.call("x"))
+		return self.call("x", return_type=int)
 	
 	# screen.w
 	def w(self) -> int:
@@ -29,7 +29,7 @@ class Screen(Base):
 
 		The width of the screen's ASCII grid.
 		"""
-		return int(self.call("w"))
+		return self.call("w", return_type=int)
 	
 	# screen.h
 	def h(self) -> int:
@@ -38,7 +38,7 @@ class Screen(Base):
 
 		The height of the screen's ASCII grid.
 		"""
-		return int(self.call("h"))
+		return self.call("h", return_type=int)
 	
 	# screen.FromWorldX
 	def FromWorldX(self, value:int) -> int:
@@ -47,7 +47,7 @@ class Screen(Base):
 
 		Converts a value on the X-axis from world-space to screen-space.
 		"""
-		return int(self.call("FromWorldX", value))
+		return self.call("FromWorldX", value, return_type=int)
 	
 	# screen.FromWorldZ
 	def FromWorldZ(self, value:int) -> int:
@@ -56,7 +56,7 @@ class Screen(Base):
 
 		Converts a value from the world-space Z-axis to screen-space Y-axis.
 		"""
-		return int(self.call("FromWorldZ", value))
+		return self.call("FromWorldZ", value, return_type=int)
 	
 	# screen.ToWorldX
 	def ToWorldX(self, value:int) -> int:
@@ -65,7 +65,7 @@ class Screen(Base):
 
 		Converts a value on the X-axis from screen-space to world-space.
 		"""
-		return int(self.call("ToWorldX", value))
+		return self.call("ToWorldX", value, return_type=int)
 	
 	# screen.ToWorldZ
 	def ToWorldZ(self, value:int) -> int:
@@ -74,7 +74,7 @@ class Screen(Base):
 
 		Converts a value from the screen-space Y-axis to world-space Z-axis.
 		"""
-		return int(self.call("ToWorldZ", value))
+		return self.call("ToWorldZ", value, return_type=int)
 	
 	# screen.Next
 	def Next(self) -> None:

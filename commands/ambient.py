@@ -6,7 +6,7 @@ class Ambient(Base):
 
 	# ambient
 	def __call__(self) -> str:
-		return str(self.call(""))
+		return self.call("", return_type=str)
 	
 	# ambient.Add
 	def Add(self, audio:str) -> None:

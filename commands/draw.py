@@ -56,6 +56,6 @@ class Draw(Base):
 
 		Returns the glyph at screen position (x, y).
 		"""
-		return str(self.call("GetSymbol", x, y))
+		return self.call("GetSymbol", x, y, return_type=str)
 	
 draw = Draw()

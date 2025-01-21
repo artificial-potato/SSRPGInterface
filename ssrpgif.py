@@ -34,6 +34,7 @@ def param_process(arg) -> list[str, str]:
         return ["s", "True" if arg else "False"]
     if type(arg) is str:
         return ["s", arg]
+    return None
     
 def command_process(name, args) -> list[str]:
     send_str_list = [str(len(args)), name]
@@ -45,35 +46,42 @@ def command_process(name, args) -> list[str]:
         send_str_list += send_arg_str_list
     return send_str_list
 
-def sloppy_cast(_str):
+def sloppy_cast(v, t=None):
     """
     Convert string to appropriate type.
     """
-
-    if _str == "":
-        return ""
-    elif _str == "True":
-        return True
-    elif _str == "False":
-        return False
-    elif _str.isdecimal():
-        return int(_str)
-    elif _str[0] == "-" and _str[1:].isdecimal():
-        return -1 * int(_str[1:])
-    return _str
+    
+    if t is int:
+        return int(v)
+    if t is bool:
+        return bool(v)
+    return v
 
 def call_command(name:str, *args):
     """
     Send a command to SSRPG.
     """
-    if len(args) == 1 and type(args[0]) == list:
-        args = args[0]
+    # if len(args) == 1 and type(args[0]) == list:
+    #     args = args[0]
     send(["1", name] + list(args))
     data = client.recv(1024)
-    if data.decode("utf-8")[2:] == "cmd_done":
-        return
+    if not data.decode("utf-8")[2:] == "cmd_done":
+        print(f"command error. name:{name}, args:{args}")
 
-def call(name:str, *args):
+def multi_call_command(command_list:list[dict]):
+    send_str_list = [len(command_list)]
+    for command in command_list:
+        send_str_list += [command["name"]] + list(command["args"])
+    send(send_str_list)
+    data = client.recv(1024)
+    result_list = data.decode('utf-8').split(DELIMITER)[1:]
+    for i in range(len(result_list)):
+        if not result_list[i] == "cmd_done":
+            name, args = command_list[i].items()
+            print(f"command error. name:{name}, args:{args}")
+
+
+def call(name:str, *args, return_type=None):
     """
     Call a function or get a variable from SSRPG.
     """
@@ -85,23 +93,37 @@ def call(name:str, *args):
 
     send(send_str_list)
     data = client.recv(1024)
-    return data.decode('utf-8')[2:]
+    return sloppy_cast(data.decode('utf-8')[2:], return_type)
 
-def multi_call(command_list:list):
+def multi_call(command_list:list[dict]):
     """
+    ```
+    [
+        {
+            'name' : str,
+            'args' : *,
+            'return_type': int|bool|str
+        }
+    ]
+    ```
+
     Call multiple functions or get multiple variables from SSRPG.
     """
 
     send_str_list = [str(len(command_list))]
     for command in command_list:
-        command_send_str_list = command_process(command[0], command[1:])
+        command_send_str_list = command_process(command["name"], command["args"])
         if command_send_str_list is None:
             return
         send_str_list += command_send_str_list
 
     send(send_str_list)
     data = client.recv(65536)
-    return data.decode('utf-8').split(DELIMITER)[1:]
+
+    result = data.decode('utf-8').split(DELIMITER)[1:]
+    for i in range(len(result)):
+        result[i] = sloppy_cast(result[i], command_list[i]["return_type"])
+    return result
 
 def get_screen(x, y, w, h):
     """

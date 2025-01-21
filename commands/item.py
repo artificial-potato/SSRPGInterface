@@ -10,7 +10,7 @@ class Head(Base):
 	# item.left
 	# item.right
 	def __call__(self) -> str:
-		return str(self.call(""))
+		return self.call("", return_type=str)
 	
 	# item.left.id
 	# item.right.id
@@ -21,7 +21,7 @@ class Head(Base):
 
 		The ID of the item equipped to the left or right hand.
 		"""
-		return str(self.call("id"))
+		return self.call("id", return_type=str)
 	
 	# item.left.state
 	# item.right.state
@@ -32,7 +32,7 @@ class Head(Base):
 		
 		The numeric representation for an equipped weapon's current state.
 		"""
-		return int(self.call("state"))
+		return self.call("state", return_type=int)
 	
 	# item.left.time
 	# item.right.time
@@ -43,7 +43,7 @@ class Head(Base):
 		
 		The numeric representation for an equipped weapon current elapsed frames within that state.
 		"""
-		return int(self.call("time"))
+		return self.call("time", return_type=int)
 	
 	# item.left.gp
 	# item.right.gp
@@ -54,7 +54,7 @@ class Head(Base):
 		
 		The gear power value of the item equipped to the left or right hand.
 		"""
-		return int(self.call("gp"))
+		return self.call("gp", return_type=int)
 
 
 
@@ -84,9 +84,9 @@ class Item(Base):
 		Returns true if it's possible to activate a specific item. Will only ever be true if the item is equipped. Some items can have mechanics that don't allow them to be activated unless specific criteria are met. This is a sub-set of item.GetCooldown(), as an item's cooldown may be zero and it cannot be activated, but it will never be possible to activate an item that is on cooldown.
 		"""
 		if item is None:
-			return bool(self.call("CanActivate"))
+			return self.call("CanActivate", return_type=bool)
 		else:
-			return bool(self.call("CanActivate", item))
+			return self.call("CanActivate", item, return_type=bool)
 	
 	# item.GetCooldown
 	def GetCooldown(self, item:str) -> int:
@@ -129,7 +129,7 @@ class Item(Base):
 		
 		Voidweaver Devour	"voidweaver"
 		"""
-		return int(self.call("GetCooldown", item))
+		return self.call("GetCooldown", item, return_type=int)
 	
 	# item.GetCount
 	def GetCount(self, item:str) -> int:
@@ -138,7 +138,7 @@ class Item(Base):
 		
 		Returns the number of copies of an item in the inventory. Returns 0 if no item is found.
 		"""
-		return int(self.call("GetCount", item))
+		return self.call("GetCount", item, return_type=int)
 	
 	# item.GetTreasureCount
 	def GetTreasureCount(self) -> int:
@@ -147,7 +147,7 @@ class Item(Base):
 		
 		Returns the current number of treasure chests in your inventory.
 		"""
-		return int(self.call("GetTreasureCount"))
+		return self.call("GetTreasureCount", return_type=int)
 	
 	# item.GetTreasureLimit
 	def GetTreasureLimit(self) -> int:
@@ -156,7 +156,7 @@ class Item(Base):
 		
 		Returns the total space for treasure chests in your inventory. In other words, the maximum capacity.
 		"""
-		return int(self.call("GetTreasureLimit"))
+		return self.call("GetTreasureLimit", return_type=int)
 	
 	# item.potion
 	def potion(self) -> str:
@@ -165,7 +165,7 @@ class Item(Base):
 		
 		The potion currently brewed. Includes "auto" if auto-refill is enabled on the Cauldron.
 		"""
-		return str(self.call("potion"))
+		return self.call("potion", return_type=str)
 	
 	# item.GetLoadoutL
 	def GetLoadoutL(self, loadout:int) -> int:
@@ -174,7 +174,7 @@ class Item(Base):
 		
 		Returns the items in a specific loadout. The integer parameter is the loadout number to query. Returns a blank string if that loadout has no item in that slot.
 		"""
-		return int(self.call("GetLoadoutL", loadout))
+		return self.call("GetLoadoutL", loadout, return_type=int)
 	
 	# item.GetLoadoutR
 	def GetLoadoutR(self, loadout:int) -> int:
@@ -183,6 +183,6 @@ class Item(Base):
 		
 		Returns the items in a specific loadout. The integer parameter is the loadout number to query. Returns a blank string if that loadout has no item in that slot.
 		"""
-		return int(self.call("GetLoadoutR", loadout))
+		return self.call("GetLoadoutR", loadout, return_type=int)
 	
 item = Item()

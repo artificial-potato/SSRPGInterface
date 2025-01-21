@@ -10,7 +10,7 @@ class Encounter(Base):
 		
 		Tells you if the current encounter is an elite encounter or not.
 		"""
-		return int(self.call(name="isElite"))
+		return self.call(name="isElite", return_type=int)
 
 	def eliteMod(self) -> str:
 		"""
@@ -18,6 +18,6 @@ class Encounter(Base):
 		
 		Tells you the special modifier, if any, for the current encounter.
 		"""
-		return str(self.call(name="eliteMod"))
+		return self.call(name="eliteMod", return_type=str)
 	
 encounter = Encounter()

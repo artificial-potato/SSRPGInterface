@@ -6,7 +6,7 @@ class Loc(Base):
 
 	# loc
 	def __call__(self) -> str:
-		return str(self.call(""))
+		return self.call("", return_type=str)
 	
 	# loc.id
 	def id(self) -> str:
@@ -15,7 +15,7 @@ class Loc(Base):
 		
 		The unique identifier of the current location.
 		"""
-		return str(self.call("id"))
+		return self.call("id", return_type=str)
 
 	# loc.name
 	def name(self) -> str:
@@ -24,7 +24,7 @@ class Loc(Base):
 		
 		The localized name of the current location.
 		"""
-		return str(self.call("name"))
+		return self.call("name", return_type=str)
 
 	# loc.stars
 	def stars(self) -> int:
@@ -33,7 +33,7 @@ class Loc(Base):
 		
 		The current location's difficulty.
 		"""
-		return int(self.call("stars"))
+		return self.call("stars", return_type=int)
 	
 	# loc.begin
 	def begin(self) -> bool:
@@ -43,7 +43,7 @@ class Loc(Base):
 		Is true only on the first frame of a location, when time = 0, before any game simulation has run. 
 		Is not true after an Ouroboros loop. Useful for resetting variables.
 		"""
-		return bool(self.call("begin"))
+		return self.call("begin", return_type=bool)
 	
 	# loc.loop
 	def loop(self) -> bool:
@@ -52,7 +52,7 @@ class Loc(Base):
 		
 		Is true on the first frame of a run after an Ouroboros loop.
 		"""
-		return bool(self.call("loop"))
+		return self.call("loop", return_type=bool)
 	
 	# loc.Leave
 	def Leave(self) -> None:
@@ -79,7 +79,7 @@ class Loc(Base):
 		
 		The current location's best completion time (your record, high-score).
 		"""
-		return int(self.call("bestTime"))
+		return self.call("bestTime", return_type=int)
 	
 	# loc.averageTime
 	def averageTime(self) -> int:
@@ -89,7 +89,7 @@ class Loc(Base):
 		The current location's average completion time. 
 		A location's average time is calculated in a weighted manner, where the latest completion time is worth more and older times are worth progressively less the older they are.
 		"""
-		return int(self.call("averageTime"))
+		return self.call("averageTime", return_type=int)
 	
 	# loc.isQuest
 	def isQuest(self) -> bool:
@@ -98,22 +98,22 @@ class Loc(Base):
 		
 		True if the current location is a special location from a Legend or custom quest. False otherwise.
 		"""
-		return bool(self.call("isQuest"))
+		return self.call("isQuest", return_type=bool)
 	
 	"""
 	# loc.nextGoalId
 	def nextGoalId(self) -> str:
-		return str(self.call("nextGoalId"))
+		return self.call("nextGoalId", return_type=str)
 	"""
 	"""
 	# loc.nextGoalName
 	def nextGoalName(self) -> str:
-		return str(self.call("nextGoalName"))
+		return self.call("nextGoalName", return_type=str)
 	"""
 	"""
 	# loc.nextGoalStars
 	def nextGoalStars(self) -> int:
-		return int(self.call("nextGoalStars"))
+		return self.call("nextGoalStars", return_type=int)
 	"""
 	
 	# loc.gp
@@ -123,7 +123,7 @@ class Loc(Base):
 		
 		The total gear power used during the current run.
 		"""
-		return int(self.call("gp"))
+		return self.call("gp", return_type=int)
 	
 loc = Loc()
 """
@@ -139,4 +139,4 @@ def totaltime() -> int:
 	The current frame number of the location, accumulated in case of boss sub-location.
 	"""
 
-	return int(call("totaltime"))
+	return call("totaltime", return_type=int)

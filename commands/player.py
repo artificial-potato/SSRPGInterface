@@ -11,7 +11,7 @@ class Player(Base):
 		
 		Indicates the direction in which the player is facing. Returns a value of 1 for `right` and -1 for `left`.
 		"""
-		return int(self.call("direction"))
+		return self.call("direction", return_type=int)
 
 	# player.framesPerMove
 	def framesPerMove(self) -> int:
@@ -20,7 +20,7 @@ class Player(Base):
 		
 		The amount of frames it takes the player to move one position forward.
 		"""
-		return int(self.call("framesPerMove"))
+		return self.call("framesPerMove", return_type=int)
 
 	# player.name
 	def name(self) -> str:
@@ -29,7 +29,7 @@ class Player(Base):
 		
 		The name chosen by the player.
 		"""
-		return str(self.call("name"))
+		return self.call("name", return_type=str)
 
 	# player.GetNextLegendName
 	def GetNextLegendName(self) -> str:
@@ -38,7 +38,7 @@ class Player(Base):
 		
 		The next unlocked Legend quest the player hasn't completed yet.
 		"""
-		return str(self.call("GetNextLegendName"))
+		return self.call("GetNextLegendName", return_type=str)
 
 	# player.ShowScaredFace
 	def ShowScaredFace(self, time:int) -> None:

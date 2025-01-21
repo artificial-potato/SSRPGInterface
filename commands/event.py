@@ -10,7 +10,7 @@ class Event(Base):
 		event.GetObjectiveId(int)``
 		
 		"""
-		return str(self.call("GetObjectiveId", p1))
+		return self.call("GetObjectiveId", p1, return_type=str)
 
 	# event.GetObjectiveProgress
 	def GetObjectiveProgress(self, p1:int, *args) -> int:
@@ -18,7 +18,7 @@ class Event(Base):
 		`event.GetObjectiveProgress(int)`
 		
 		"""
-		return int(self.call("GetObjectiveProgress", p1))
+		return self.call("GetObjectiveProgress", p1, return_type=int)
 
 	# event.GetObjectiveGoal
 	def GetObjectiveGoal(self, p1:int, *args) -> int:
@@ -26,7 +26,7 @@ class Event(Base):
 		`event.GetObjectiveGoal(int)`
 		
 		"""
-		return int(self.call("GetObjectiveGoal", p1))
+		return self.call("GetObjectiveGoal", p1, return_type=int)
 	
 event = Event()
 """

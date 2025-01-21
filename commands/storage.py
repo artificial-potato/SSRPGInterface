@@ -33,7 +33,7 @@ class Storage(Base):
 
 		Returns `true` if the specified key exists in permanent storage; `false` otherwise.
 		"""
-		return bool(self.call("Has"))
+		return self.call("Has", return_type=bool)
 
 	# storage.Delete
 	def Delete(self, key:str) -> None:
@@ -51,7 +51,7 @@ class Storage(Base):
 
 		Increases by 1 the value stored at the specified key, then returns the new value.
 		"""
-		return int(self.call("Incr", key))
+		return self.call("Incr", key, return_type=int)
 
 	# storage.Keys
 	def Keys(self) -> list[str]:

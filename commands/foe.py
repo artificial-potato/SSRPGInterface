@@ -9,7 +9,7 @@ class Foe(Base):
 
 	# foe
 	def __call__(self) -> str:
-		return str(self.call(""))
+		return self.call("", return_type=str)
 	
 	# foe.id
 	def id(self) -> str:
@@ -18,7 +18,7 @@ class Foe(Base):
 
 		The unique ID (or type) of the foe being targeted by the player.
 		"""
-		return str(self.call("id"))
+		return self.call("id", return_type=str)
 	
 	# foe.name
 	def name(self) -> str:
@@ -27,7 +27,7 @@ class Foe(Base):
 
 		The localized name of the foe being targeted by the player.
 		"""
-		return str(self.call("name"))
+		return self.call("name", return_type=str)
 	
 	# foe.damage
 	def damage(self) -> int:
@@ -36,7 +36,7 @@ class Foe(Base):
 
 		The damage per attack of the foe being targeted by the player.
 		"""
-		return int(self.call("damage"))
+		return self.call("damage", return_type=int)
 	
 	# foe.distance
 	def distance(self) -> int:
@@ -45,7 +45,7 @@ class Foe(Base):
 
 		The distance between the player and the foe being targeted.
 		"""
-		return int(self.call("distance"))
+		return self.call("distance", return_type=int)
 	
 	# foe.z
 	def z(self) -> int:
@@ -54,7 +54,7 @@ class Foe(Base):
 
 		The z position of the foe being targeted.
 		"""
-		return int(self.call("z"))
+		return self.call("z", return_type=int)
 	
 	# foe.count
 	def count(self) -> int:
@@ -63,7 +63,7 @@ class Foe(Base):
 
 		The number of foes within 46 units of the player.
 		"""
-		return int(self.call("count"))
+		return self.call("count", return_type=int)
 	
 	# foe.GetCount
 	def GetCount(self, distance:int) -> int:
@@ -72,7 +72,7 @@ class Foe(Base):
 
 		The number of foes within a specific number of units.
 		"""
-		return int(self.call("GetCount", distance))
+		return self.call("GetCount", distance, return_type=int)
 	
 	# foe.hp
 	def hp(self) -> int:
@@ -81,7 +81,7 @@ class Foe(Base):
 
 		The current hitpoints of the foe being targeted by the player.
 		"""
-		return int(self.call("hp"))
+		return self.call("hp", return_type=int)
 	
 	# foe.maxhp
 	def maxhp(self) -> int:
@@ -90,7 +90,7 @@ class Foe(Base):
 
 		The maximum hitpoints of the foe being targeted by the player.
 		"""
-		return int(self.call("maxhp"))
+		return self.call("maxhp", return_type=int)
 	
 	# foe.armor
 	def armor(self) -> int:
@@ -99,7 +99,7 @@ class Foe(Base):
 
 		The current armor of the foe being targeted by the player.
 		"""
-		return int(self.call("armor"))
+		return self.call("armor", return_type=int)
 	
 	# foe.maxarmor
 	def maxarmor(self) -> int:
@@ -108,7 +108,7 @@ class Foe(Base):
 
 		The maximum armor of the foe being targeted by the player.
 		"""
-		return int(self.call("maxarmor"))
+		return self.call("maxarmor", return_type=int)
 	
 	# foe.state
 	def state(self) -> int:
@@ -117,7 +117,7 @@ class Foe(Base):
 
 		A number representing the target foe's current state.
 		"""
-		return int(self.call("state"))
+		return self.call("state", return_type=int)
 	
 	# foe.time
 	def time(self) -> int:
@@ -126,7 +126,7 @@ class Foe(Base):
 
 		Elapsed number of frames in target foe's current state.
 		"""
-		return int(self.call("time"))
+		return self.call("time", return_type=int)
 	
 	# foe.level
 	def level(self) -> int:
@@ -135,7 +135,7 @@ class Foe(Base):
 
 		The level number of the target foe.
 		"""
-		return int(self.call("level"))
+		return self.call("level", return_type=int)
 	
 foe = Foe()
 """

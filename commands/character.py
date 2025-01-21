@@ -7,11 +7,11 @@ class Armor(Base):
 	
 	# armor
 	def __call__(self) -> int:
-		return int(self.call(""))
+		return self.call("", return_type=int)
 	
 	# armor.f
 	def f(self) -> int:
-		return int(self.call("f"))
+		return self.call("f", return_type=int)
 
 armor = Armor()
 buffs = Buffs("buffs")
@@ -23,7 +23,7 @@ def hp() -> int:
 
 	The player's current hitpoints.
 	"""
-	return int(call("hp"))
+	return call("hp", return_type=int)
 
 def maxhp() -> int:
 	"""
@@ -31,7 +31,7 @@ def maxhp() -> int:
 
 	The player's maximum hitpoints.
 	"""
-	return int(call("maxhp"))
+	return call("maxhp", return_type=int)
 
 def maxarmor() -> int:
 	"""
@@ -39,7 +39,7 @@ def maxarmor() -> int:
 
 	The player's maximum armor, rounded down.
 	"""
-	return int(call("maxarmor"))
+	return call("maxarmor", return_type=int)
 
 def face() -> str:
 	"""
@@ -47,7 +47,7 @@ def face() -> str:
 
 	The player's current facial expression.
 	"""
-	return str(call("face"))
+	return call("face", return_type=str)
 
 def bighead() -> bool:
 	"""
@@ -55,7 +55,7 @@ def bighead() -> bool:
 
 	True if the player has Big Head enabled (Moondial).
 	"""
-	return bool(call("bighead"))
+	return call("bighead", return_type=bool)
 
 def totalgp() -> int:
 	"""
@@ -63,4 +63,4 @@ def totalgp() -> int:
 
 	The total "Gear Power" of your inventory, calculated from item star levels and enchantment bonuses.
 	"""
-	return int(call("totalgp"))
+	return call("totalgp", return_type=int)

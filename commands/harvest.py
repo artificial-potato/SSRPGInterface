@@ -6,7 +6,7 @@ class Harvest(Base):
 
 	# harvest
 	def __call__(self) -> str:
-		return str(self.call(""))
+		return self.call("", return_type=str)
 	
 	# harvest.distance
 	def distance(self) -> int:
@@ -15,7 +15,7 @@ class Harvest(Base):
 		
 		The distance between the player and the nearest harvestable object.
 		"""
-		return int(self.call("distance"))
+		return self.call("distance", return_type=int)
 	
 	# harvest.z
 	def z(self) -> int:
@@ -24,7 +24,7 @@ class Harvest(Base):
 		
 		The z position of the nearest harvestable object.
 		"""
-		return int(self.call("z"))
+		return self.call("z", return_type=int)
 
 harvest = Harvest()
 """

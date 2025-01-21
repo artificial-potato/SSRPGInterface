@@ -6,7 +6,7 @@ class Pickup(Base):
 
 	# pickup
 	def __call__(self) -> str:
-		return str(self.call(""))
+		return self.call("", return_type=str)
 	
 	# pickup.distance
 	def distance(self) -> int:
@@ -15,7 +15,7 @@ class Pickup(Base):
 		
 		The distance between the player and the pickup being targeted.
 		"""
-		return int(self.call("distance"))
+		return self.call("distance", return_type=int)
 	
 	# pickup.z
 	def z(self) -> int:
@@ -24,7 +24,7 @@ class Pickup(Base):
 		
 		The z position of the pickup being targeted.
 		"""
-		return int(self.call("z"))
+		return self.call("z", return_type=int)
 	
 pickup = Pickup()
 """

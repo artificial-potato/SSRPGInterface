@@ -6,7 +6,7 @@ class Music(Base):
 
 	# music
 	def __call__(self) -> str:
-		return str(self.call(""))
+		return self.call("", return_type=str)
 	
 	# music.Play
 	def Play(self, sound:str) -> None:

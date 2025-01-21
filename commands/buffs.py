@@ -19,7 +19,7 @@ class Buffs(Base):
 		`foe.debuffs.count`
 		The number of debuffs (negative effects) on the foe being targeted.
 		"""
-		return int(self.call("count"))
+		return self.call("count", return_type=int)
 	
 	# buffs.string
 	# debuffs.string
@@ -39,7 +39,7 @@ class Buffs(Base):
 		`foe.debuffs.string`
 		A composite of information about all the debuffs on the target foe.
 		"""
-		return str(self.call("string"))
+		return self.call("string", return_type=str)
 	
 	# buffs.GetCount
 	# debuffs.GetCount
@@ -59,7 +59,7 @@ class Buffs(Base):
 		`foe.debuffs.GetCount(str)`
 		The number of a specific debuff on the target foe.
 		"""
-		return int(self.call("GetCount", buff_name))
+		return self.call("GetCount", buff_name, return_type=int)
 	
 	# buffs.GetTime
 	# debuffs.GetTime
@@ -80,4 +80,4 @@ class Buffs(Base):
 		The duration of a specific debuff on the target foe.
 
 		"""
-		return int(self.call("GetTime", buff_name))
+		return self.call("GetTime", buff_name, return_type=int)

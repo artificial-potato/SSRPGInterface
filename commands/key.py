@@ -6,7 +6,7 @@ class Key(Base):
 
 	# key
 	def __call__(self) -> str:
-		return str(self.call(""))
+		return self.call("", return_type=str)
 	
 	# key.Bind
 	def Bind(self, action:str, key1:str, key2:str=None) -> None:
@@ -30,28 +30,28 @@ class Key(Base):
 		"""
 		Returns the first key bound to a given action. Returns "None" if the given action has no keys bound to it.
 		"""
-		return str(self.call("GetActKey", action))
+		return self.call("GetActKey", action, return_type=str)
 	
 	# key.GetActKey1
 	def GetActKey1(self, action:str) -> str:
 		"""
 		Returns the first key bound to a given action. Returns "None" if the given action has no keys bound to it.
 		"""
-		return str(self.call("GetActKey", action))
+		return self.call("GetActKey", action, return_type=str)
 	
 	# key.GetActKey2
 	def GetActKey2(self, action:str) -> str:
 		"""
 		Returns the second key bound to a given action. Returns "None" if the given action does not have a secondary key bound to it.
 		"""
-		return str(self.call("GetActKey2", action))
+		return self.call("GetActKey2", action, return_type=str)
 	
 	# key.GetActLabel
 	def GetActLabel(self, action:str) -> str:
 		"""
 		Returns a user-facing label that represents the first key bound to a given action. The current implementation returns the first letter of the bound key, which can be confusing in cases such as "LeftShift".
 		"""
-		return str(self.call("GetActLabel", action))
+		return self.call("GetActLabel", action, return_type=str)
 	
 	# key.ResetBinds
 	def ResetBinds(self) -> None:

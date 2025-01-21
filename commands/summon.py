@@ -11,7 +11,7 @@ class Summon(Base):
 		
 		The number of summoned allies currently in game.
 		"""
-		return int(self.call("count"))
+		return self.call("count", return_type=int)
 	
 	# summon.GetId
 	def GetId(self, index:int=0) -> str:
@@ -22,7 +22,7 @@ class Summon(Base):
 		The index parameter is optional and defaults to zero (first summon). 
 		Returns null if no summons are at that index.
 		"""
-		return str(self.call("GetId", index))
+		return self.call("GetId", index, return_type=str)
 	
 	# summon.GetName
 	def GetName(self, index:int=0) -> str:
@@ -33,7 +33,7 @@ class Summon(Base):
 		The index parameter is optional and defaults to zero (first summon). 
 		Returns null if no summons are at that index.
 		"""
-		return str(self.call("GetName", index))
+		return self.call("GetName", index, return_type=str)
 	
 	# summon.GetVar
 	def GetVar(self, varName:str, index:int=0) -> int:
@@ -45,7 +45,7 @@ class Summon(Base):
 		The index parameter is optional and defaults to zero (first summon). 
 		Returns null if no summons are at that index. Shows an error if varName does not correspond to a valid variable.
 		"""
-		return int(self.call("GetVar", varName, index))
+		return self.call("GetVar", varName, index, return_type=int)
 	
 	# summon.GetState
 	def GetState(self, index:int=0) -> int:
@@ -56,7 +56,7 @@ class Summon(Base):
 		The index parameter is optional and defaults to zero (first summon). 
 		Returns -1 if no summons are at that index.
 		"""
-		return int(self.call("GetState"))
+		return self.call("GetState", return_type=int)
 	
 	# summon.GetTime
 	def GetTime(self, index:int=0) -> int:
@@ -65,6 +65,6 @@ class Summon(Base):
 		
 		
 		"""
-		return int(self.call("GetTime", index))
+		return self.call("GetTime", index, return_type=int)
 	
 summon = Summon()
