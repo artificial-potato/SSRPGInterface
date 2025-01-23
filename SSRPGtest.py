@@ -5,7 +5,7 @@ WARNING: The file needs to be in the same directory as the SSRPGInterface folder
 from SSRPGInterface.commands import *
 import SSRPGInterface
 import cProfile
-import time
+from time import ctime, time_ns
 
 # Define the test step function
 y = 0
@@ -15,13 +15,13 @@ def teststep():
     if loc.begin():
         y = 0
         # Execute the command to brew tar + wood
-        command.Brew("tar + wood")
+        command.Brew("tar", "wood")
     
     # Update y coordinate
     y = (y + 1) % 30
     
     # Send a command with the y coordinate and current time
-    command.Print(f"`1,{y},hello python!{time.ctime()}")
+    command.Print(f"`1,{y},hello python!{ctime()}")
     
     
     # Print the foe and its distance
@@ -36,7 +36,7 @@ def teststep():
         command.equip("arm")
         if foe.distance() < 8 and item.CanActivate("skeleton_arm"):
             command.Activate("R")
-        print(f"{item.GetCooldown("skeleton_arm")} {item.CanActivate("skeleton_arm")}")
+        print(f'{item.GetCooldown("skeleton_arm")} {item.CanActivate("skeleton_arm")}')
 
 def battle_test():
     if item.left.state() == 3:
@@ -60,7 +60,7 @@ def connect_callback_speed_test():
     get_var_commands_test_func()
     if num < 20:
         num = num + 1
-        start_time = time.time_ns()
+        start_time = time_ns()
         #tt = totaltime()
         for i1 in range(100):
             for i2 in range(100):
@@ -68,7 +68,7 @@ def connect_callback_speed_test():
                     #if tt == -1:
                     if totaltime() == -1:
                         return
-        end_time = time.time_ns()
+        end_time = time_ns()
         finish_time = end_time - start_time
         fl.append(finish_time)
         print(f'Connect Callback Speed Test {num}:\t{finish_time / 1000000}ms\t{finish_time}ns')
@@ -82,7 +82,7 @@ def connect_callback_speed_test():
 def check_str_length_test():
     left_item = item.left()
     right_item = item.right()
-    print(f'\rleft len:{len(left_item)} name:{left_item}\t\tright len:{len(right_item)} name:{right_item}\t\t\t\t\t", end="')
+    print(f'\rleft len:{len(left_item)} name:{left_item}\t\tright len:{len(right_item)} name:{right_item}\t\t\t\t\t', end="")
 
 # num = 0
 def get_var_commands_test():
