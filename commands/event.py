@@ -5,28 +5,28 @@ class Event(Base):
 		self.class_name = "event"
 
 	# event.GetObjectiveId
-	def GetObjectiveId(self, p1:int, *args) -> str:
+	def GetObjectiveId(self, index:int, *args) -> str:
 		"""
 		event.GetObjectiveId(int)``
 		
 		"""
-		return self.call("GetObjectiveId", p1, return_type=str)
+		return self.call("GetObjectiveId", index, return_type=str)
 
 	# event.GetObjectiveProgress
-	def GetObjectiveProgress(self, p1:int, *args) -> int:
+	def GetObjectiveProgress(self, index:int, *args) -> int:
 		"""
 		`event.GetObjectiveProgress(int)`
 		
 		"""
-		return self.call("GetObjectiveProgress", p1, return_type=int)
+		return self.call("GetObjectiveProgress", index, return_type=int)
 
 	# event.GetObjectiveGoal
-	def GetObjectiveGoal(self, p1:int, *args) -> int:
+	def GetObjectiveGoal(self, index:int, *args) -> int:
 		"""
 		`event.GetObjectiveGoal(int)`
 		
 		"""
-		return self.call("GetObjectiveGoal", p1, return_type=int)
+		return self.call("GetObjectiveGoal", index, return_type=int)
 	
 event = Event()
 """

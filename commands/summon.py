@@ -45,7 +45,10 @@ class Summon(Base):
 		The index parameter is optional and defaults to zero (first summon). 
 		Returns null if no summons are at that index. Shows an error if varName does not correspond to a valid variable.
 		"""
-		return self.call("GetVar", varName, index, return_type=int)
+		try:
+			return self.call("GetVar", varName, index, return_type=int)
+		except ValueError:
+			return None
 	
 	# summon.GetState
 	def GetState(self, index:int=0) -> int:

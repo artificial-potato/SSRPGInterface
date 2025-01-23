@@ -1,4 +1,5 @@
 from . import ssrpgif
+
 cache_dict = {}
 """
 ```
@@ -37,67 +38,84 @@ def preload():
 	preload_index.clear()
 
 def add_preload_index(index):
-	if index in exclude_preload_index:
+	if index in preload_index:
 		return
 	if index in keep_preload_index:
 		return
+	if index in exclude_preload_index:
+		return
 	preload_index.append(index)
+
+def command_to_cache_index(name:str, args:list|tuple, return_type=None):
+	return (name,) + tuple(args) + (return_type,)
 
 
 
 def call(name:str, *args, return_type=None):
-	index = (name,) + args + (return_type,)
+	cache_index = command_to_cache_index(name, args, return_type)
 
-	data = get_cache(index)
+	data = get_cache(cache_index)
 	if not data is None:
-		add_preload_index(index)
+		add_preload_index(cache_index)
 		return data
 		
 	data = ssrpgif.call(name, *args, return_type=return_type)
-
+	
 	if not data is None:
-		add_preload_index(index)
-		set_cache(data, index)
+		add_preload_index(cache_index)
+		set_cache(data, cache_index)
 
 	return data
 
-def multi_call(command_list:list, check_cache:bool=False):
-	finish = [False for i in range(len(command_list))]
-	result = [None for i in range(len(command_list))]
-
-	if check_cache:
-		for i in range(len(command_list)):
-			command = command_list[i]
-			cmd_data = get_cache(command)
-			if not cmd_data is None:
-				result[i] = cmd_data
-				finish[i] = True
-
-		new_command_list = []
-		for i in range(len(finish)):
-			if finish is False:
-				new_command_list.append(command_list[i])
-		command_list = new_command_list
+"""
+# Do multi_call really need check cache?
+def multi_call(command_list:list):
+	result = [None] * len(command_list)
 
 	data_list = ssrpgif.multi_call(command_list)
 
-	result_index = 0
+	for i, data in enumerate(data_list):
+		if data in (None, "cmd_done"):
+			continue
+
+		result[i] = data
+		set_cache(data, command_to_cache_index(**command_list[i]))
+
+	return result
+"""
+def multi_call(command_list:list, check_cache:bool=False):
+	list_length = len(command_list)
+	finish = [False] * list_length
+	result = [None] * list_length
+
+	if check_cache:
+		call_command_list = []
+		for i, command in enumerate(command_list):
+			cmd_data = get_cache(command)
+			if cmd_data is None:
+				call_command_list.append(command_list[i])
+			else:
+				result[i] = cmd_data
+				finish[i] = True
+	else:
+		call_command_list = command_list
+
+	data_list = ssrpgif.multi_call(call_command_list)
+
+	index = -1
 	for data in data_list:
-		if not False in finish:
+		while index < list_length:
+			index += 1
+			if not finish[index]:
+				break
+		if index == list_length:
 			break
-		result_index = finish.index(False, result_index)
-		finish[result_index] = True
 
-		if data is None:
-			continue
-		if data == "cmd_done":
+		if data in (None, "cmd_done"):
 			continue
 
-		result[result_index] = data
-
-		command = command_list[result_index]
-		index = (command["name"],) + command["args"] + (command["return_type"],)
-		set_cache(data, index)
+		result[index] = data
+		set_cache(data, command_to_cache_index(**command_list[index]))
 
 	return result
 

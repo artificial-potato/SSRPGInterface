@@ -1,6 +1,6 @@
 from .base import *
 
-class Pos(Base):
+class Position(Base):
 	def __init__(self):
 		self.class_name = "pos"
 
@@ -31,4 +31,4 @@ class Pos(Base):
 		"""
 		return self.call("z", return_type=int)
 	
-pos = Pos()
+pos = Position()

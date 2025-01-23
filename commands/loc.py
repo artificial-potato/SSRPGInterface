@@ -132,6 +132,15 @@ loc = Loc()
 The current location the player is visiting.
 """
 
+def time() -> int:
+	"""
+	`time`
+
+	The current frame number of the location.
+	"""
+
+	return call("time", return_type=int)
+
 def totaltime() -> int:
 	"""
 	`totaltime`

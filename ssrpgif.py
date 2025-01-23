@@ -6,21 +6,36 @@ Released under the MIT license
 Copyright 2025 ArtificialPotato and contributors
 https://github.com/artificial-potato/SSRPGInterface/blob/main/LICENSE
 """
+from os import _exit
 import sys
 import socket
-import itertools
-import time
 import atexit
 
-from .cache import preload
-
-DELIMITER = "\x1f"
 ACK_VER = '\x06' + "0.1"
+DELIMITER = "\x1f"
+
+Game_Version:str = None
+Token = None
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client.settimeout(10)
 
-connecting = False
+def recv(size:int=1024):
+    while True:
+        try:
+            data = client.recv(size)
+            return data.decode("utf-8")
+        except TimeoutError:
+            # Error when the game is paused or left a location
+            print("\rOperation timeout", end="")
+            continue
+        except ConnectionAbortedError:
+            print("\nConnection Closed")
+            exit()
+        except Exception as e:
+            print(e)
+            print("An unexpected error occurred, exiting the program")
+            exit()
 
 def send(str_list) -> None:
     client.send(DELIMITER.join(str_list).encode('utf-8'))
@@ -57,6 +72,8 @@ def sloppy_cast(v, t=None):
         return bool(v)
     return v
 
+
+
 def call_command(name:str, *args):
     """
     Send a command to SSRPG.
@@ -64,8 +81,8 @@ def call_command(name:str, *args):
     # if len(args) == 1 and type(args[0]) == list:
     #     args = args[0]
     send(["1", name] + list(args))
-    data = client.recv(1024)
-    if not data.decode("utf-8")[2:] == "cmd_done":
+    data = recv()
+    if not data[2:] == "cmd_done":
         print(f"command error. name:{name}, args:{args}")
 
 def multi_call_command(command_list:list[dict]):
@@ -73,8 +90,8 @@ def multi_call_command(command_list:list[dict]):
     for command in command_list:
         send_str_list += [command["name"]] + list(command["args"])
     send(send_str_list)
-    data = client.recv(1024)
-    result_list = data.decode('utf-8').split(DELIMITER)[1:]
+    data = recv()
+    result_list = data.split(DELIMITER)[1:]
     for i in range(len(result_list)):
         if not result_list[i] == "cmd_done":
             name, args = command_list[i].items()
@@ -92,8 +109,8 @@ def call(name:str, *args, return_type=None):
     send_str_list = ["1"] + send_str_list
 
     send(send_str_list)
-    data = client.recv(1024)
-    return sloppy_cast(data.decode('utf-8')[2:], return_type)
+    data = recv()
+    return sloppy_cast(data.split(DELIMITER)[1], return_type)
 
 def multi_call(command_list:list[dict]):
     """
@@ -103,7 +120,7 @@ def multi_call(command_list:list[dict]):
             'name' : str,
             'args' : *,
             'return_type': int|bool|str
-        }
+        }, ...
     ]
     ```
 
@@ -118,13 +135,17 @@ def multi_call(command_list:list[dict]):
         send_str_list += command_send_str_list
 
     send(send_str_list)
-    data = client.recv(65536)
+    data = recv(65536)
 
-    result = data.decode('utf-8').split(DELIMITER)[1:]
+    result = data.split(DELIMITER)[1:]
     for i in range(len(result)):
         result[i] = sloppy_cast(result[i], command_list[i]["return_type"])
     return result
 
+
+
+import itertools
+import time
 def get_screen(x, y, w, h):
     """
     Get the screen content from SSRPG.
@@ -135,8 +156,9 @@ def get_screen(x, y, w, h):
     res = "\n".join(res)
     return res
 
+
+
 def connect(host="127.0.0.1", port=64649):
-    global connecting
     print("Start Connect SSRPG")
     while True:
         print("\rConnecting          ", end="")
@@ -144,62 +166,60 @@ def connect(host="127.0.0.1", port=64649):
         try:
             client.connect((host, port))
             print("\rConnect Success")
-            connecting = True
-            return True
+            break
         except TimeoutError:
             print("\rConnect Timeout", end="")
         except ConnectionRefusedError:
             print("\rConnect Refused", end="")
 
         # retry after 5 seconds
-        for i in range(5):
+        for _ in range(5):
             print(".", end="")
             sys.stdout.flush()
             time.sleep(1)
+    return True
 
-def eof():
+def check_header() -> bool:
+    data = recv(256)
+    if '\x06' in data:
+        if ACK_VER != data:
+            print("Warning: version mismatch")
+        return True
+    else:
+        print("error")
+        return False
+
+def send_eof():
     """
     Notify SSRPG of step completion.
     """
     client.send('\x03'.encode('utf-8'))
 
 def close():
-    global connecting
-    if connecting:
-        client.close()
-        connecting = False
-        print("Close Connect")
+    client.close()
+    print("Close Connect")
 
-def run(step, host="127.0.0.1", port=64649):
+def run(step):
     """
     Start the interface and execute the step function in a loop.
     """
 
+    from .cache import preload
+
     atexit.register(close)
-    connect(host, port)
 
-    while True:
-        try:
-            data = client.recv(1024)
-        except TimeoutError: # Error when the game is paused
-            print("\rOperation timeout", end="")
-            continue
-        except ConnectionAbortedError:
-            print("\nConnection Closed")
-            close()
-            return
-        except Exception:
-            print(Exception)
-            print("An unexpected error occurred, exiting the program")
-            close()
-            return
-
-        if '\x06' in data.decode('utf-8'):
-            if ACK_VER != data.decode('utf-8'):
-                print("Warning: version mismatch")
+    if check_header():
+        while True:
             preload()
             step()
-            eof()
-        else:
-            print("error")
-            return
+            send_eof()
+
+            data = recv(256)
+            if data[0] is '\x06':
+                continue
+                match data[1:]:
+                    case _:
+                        pass
+            else:
+                break
+    # exit()

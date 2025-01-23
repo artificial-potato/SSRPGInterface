@@ -4,13 +4,13 @@ class Encounter(Base):
 	def __init__(self):
 		self.class_name = "encounter"
 
-	def isElite(self) -> int:
+	def isElite(self) -> bool:
 		"""
 		`encounter.isElite`
 		
 		Tells you if the current encounter is an elite encounter or not.
 		"""
-		return self.call(name="isElite", return_type=int)
+		return self.call(name="isElite", return_type=bool)
 
 	def eliteMod(self) -> str:
 		"""

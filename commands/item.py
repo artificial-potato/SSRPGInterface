@@ -99,35 +99,35 @@ class Item(Base):
 
 		Item
 		----	Cooldown ID
-		-----------	
+		----
 
-		Æther Talisman	"aether_talisman"
+		`Æther Talisman`	`"aether_talisman"`
 
-		Bardiche	"bardiche"
+		`Bardiche`	`"bardiche"`
 
-		Bashing Shield	"bash"
+		`Bashing Shield`	`"bash"`
 		
-		Blade of the Fallen God	"blade"
+		`Blade of the Fallen God`	`"blade"`
 		
-		Cinderwisp Devour	"cinderwisp"
+		`Cinderwisp Devour`	`"cinderwisp"`
 		
-		Cultist Mask	"mask"
+		`Cultist Mask`	`"mask"`
 		
-		Dashing Shield	"dash"
+		`Dashing Shield`	`"dash"`
 		
-		Fire Talisman	"fire_talisman"
+		`Fire Talisman`	`"fire_talisman"`
 		
-		Hatchet	"hatchet"
+		`Hatchet`	`"hatchet"`
 		
-		Heavy Hammer	"heavy_hammer"
+		`Heavy Hammer`	`"heavy_hammer"`
 		
-		Mind Stone	"mind"
+		`Mind Stone`	`"mind"`
 		
-		Quarterstaff	"quarterstaff"
+		`Quarterstaff`	`"quarterstaff"`
 		
-		Skeleton Arm	"skeleton_arm"
+		`Skeleton Arm`	`"skeleton_arm"`
 		
-		Voidweaver Devour	"voidweaver"
+		`Voidweaver Devour`	`"voidweaver"`
 		"""
 		return self.call("GetCooldown", item, return_type=int)
 	
@@ -168,21 +168,21 @@ class Item(Base):
 		return self.call("potion", return_type=str)
 	
 	# item.GetLoadoutL
-	def GetLoadoutL(self, loadout:int) -> int:
+	def GetLoadoutL(self, loadout:int) -> str:
 		"""
 		`item.GetLoadoutL(int)`
 		
 		Returns the items in a specific loadout. The integer parameter is the loadout number to query. Returns a blank string if that loadout has no item in that slot.
 		"""
-		return self.call("GetLoadoutL", loadout, return_type=int)
+		return self.call("GetLoadoutL", loadout, return_type=str)
 	
 	# item.GetLoadoutR
-	def GetLoadoutR(self, loadout:int) -> int:
+	def GetLoadoutR(self, loadout:int) -> str:
 		"""
 		`item.GetLoadoutR(int)`
 		
 		Returns the items in a specific loadout. The integer parameter is the loadout number to query. Returns a blank string if that loadout has no item in that slot.
 		"""
-		return self.call("GetLoadoutR", loadout, return_type=int)
+		return self.call("GetLoadoutR", loadout, return_type=str)
 	
 item = Item()

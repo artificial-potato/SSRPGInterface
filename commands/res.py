@@ -1,6 +1,6 @@
 from .base import *
 
-class RES(Base):
+class Resource(Base):
 	def __init__(self):
 		self.class_name = "res"
 	
@@ -28,7 +28,7 @@ class RES(Base):
 	def crystals(self) -> int:
 		return self.call("crystals", return_type=int)
 	
-res = RES()
+res = Resource()
 """
 `res.stone`
 `res.wood`

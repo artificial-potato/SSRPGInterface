@@ -1,6 +1,6 @@
 from .action import *
 from .ai import *
-from .ambient import *
+#from .ambient import *
 from .character import *
 from .draw import *
 from .encounter import *
@@ -11,7 +11,7 @@ from .input import *
 from .item import *
 from .key import *
 from .loc import *
-from .music import *
+#from .music import *
 from .pickup import *
 from .player import *
 from .pos import *
@@ -19,16 +19,14 @@ from .res import *
 from .screen import *
 from .storage import *
 from .summon import *
-from .text import *
-from .time import *
-from .utc import *
+#from .text import *
 
 __all__ = (
 	#action
 	"command",
 
 	"ai",
-	"ambient",
+	#"ambient",
 	
 	#character
 	"armor",
@@ -49,8 +47,8 @@ __all__ = (
 	"input",
 	"item",
 	"key",
-	"loc", "totaltime",
-	"music",
+	"loc", "time", "totaltime",
+	#"music",
 	"pickup",
 	"player",
 	"pos",
@@ -58,7 +56,5 @@ __all__ = (
 	"screen",
 	"storage",
 	"summon",
-	"text",
-	"time",
-	"utc",
+	#"te",
 )
