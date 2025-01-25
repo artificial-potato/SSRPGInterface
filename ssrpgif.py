@@ -6,10 +6,10 @@ Released under the MIT license
 Copyright 2025 ArtificialPotato and contributors
 https://github.com/artificial-potato/SSRPGInterface/blob/main/LICENSE
 """
-from os import _exit
-import sys
 import socket
 import atexit
+from sys import stdout
+from time import sleep
 
 ACK_VER = '\x06' + "0.1"
 DELIMITER = "\x1f"
@@ -69,7 +69,7 @@ def sloppy_cast(v, t=None):
     if t is int:
         return int(v)
     if t is bool:
-        return bool(v)
+        return False if v == "False" or not v else True
     return v
 
 
@@ -82,18 +82,18 @@ def call_command(name:str, *args):
     #     args = args[0]
     send(["1", name] + list(args))
     data = recv()
-    if not data[2:] == "cmd_done":
+    if data[2:] != "cmd_done":
         print(f"command error. name:{name}, args:{args}")
 
 def multi_call_command(command_list:list[dict]):
-    send_str_list = [len(command_list)]
+    send_str_list = [str(len(command_list))]
     for command in command_list:
         send_str_list += [command["name"]] + list(command["args"])
     send(send_str_list)
     data = recv()
     result_list = data.split(DELIMITER)[1:]
     for i in range(len(result_list)):
-        if not result_list[i] == "cmd_done":
+        if result_list[i] != "cmd_done":
             name, args = command_list[i].items()
             print(f"command error. name:{name}, args:{args}")
 
@@ -143,21 +143,6 @@ def multi_call(command_list:list[dict]):
     return result
 
 
-
-import itertools
-import time
-def get_screen(x, y, w, h):
-    """
-    Get the screen content from SSRPG.
-    """
-    inst = [["draw.GetSymbol", x + xy[1], y + xy[0]] for xy in itertools.product(range(h), range(w))]
-    res = multi_call(inst)
-    res = ["".join(res[w * i:w * (i + 1)]) for i in range(h)]
-    res = "\n".join(res)
-    return res
-
-
-
 def connect(host="127.0.0.1", port=64649):
     print("Start Connect SSRPG")
     while True:
@@ -175,8 +160,8 @@ def connect(host="127.0.0.1", port=64649):
         # retry after 5 seconds
         for _ in range(5):
             print(".", end="")
-            sys.stdout.flush()
-            time.sleep(1)
+            stdout.flush()
+            sleep(1)
     return True
 
 def check_header() -> bool:
@@ -196,6 +181,7 @@ def send_eof():
     client.send('\x03'.encode('utf-8'))
 
 def close():
+    call("loc.Pause")
     client.close()
     print("Close Connect")
 
@@ -204,7 +190,7 @@ def run(step):
     Start the interface and execute the step function in a loop.
     """
 
-    from .cache import preload
+    from .cache import preload, run_command
 
     atexit.register(close)
 
@@ -212,10 +198,11 @@ def run(step):
         while True:
             preload()
             step()
+            run_command()
             send_eof()
 
             data = recv(256)
-            if data[0] is '\x06':
+            if data[0] == '\x06':
                 continue
                 match data[1:]:
                     case _:

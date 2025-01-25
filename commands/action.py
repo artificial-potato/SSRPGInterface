@@ -1,4 +1,4 @@
-from ..ssrpgif import call_command
+from ..cache import call_command
 
 class Command():
 	def call(self, name, *args):
@@ -22,8 +22,7 @@ class Command():
 				str_list.append("c")
 			else:
 				str_list.append("`")
-			str_list.append(f'{x},')
-			str_list.append(f'{y},')
+			str_list.append(f'{x},{y},')
 			if color:
 				str_list.append(f'{color},')
 		str_list += map(lambda a: str(a), args)

@@ -63,42 +63,26 @@ def call(name:str, *args, return_type=None):
 	
 	if not data is None:
 		add_preload_index(cache_index)
-		set_cache(data, cache_index)
+	set_cache(data, cache_index)
 
 	return data
 
-"""
-# Do multi_call really need check cache?
-def multi_call(command_list:list):
-	result = [None] * len(command_list)
-
-	data_list = ssrpgif.multi_call(command_list)
-
-	for i, data in enumerate(data_list):
-		if data in (None, "cmd_done"):
-			continue
-
-		result[i] = data
-		set_cache(data, command_to_cache_index(**command_list[i]))
-
-	return result
-"""
-def multi_call(command_list:list, check_cache:bool=False):
+def multi_call(command_list:list, is_preload:bool=True):
 	list_length = len(command_list)
 	finish = [False] * list_length
 	result = [None] * list_length
 
-	if check_cache:
+	if is_preload:
+		call_command_list = command_list
+	else:
 		call_command_list = []
 		for i, command in enumerate(command_list):
-			cmd_data = get_cache(command)
+			cmd_data = get_cache(command_to_cache_index(**command))
 			if cmd_data is None:
 				call_command_list.append(command_list[i])
 			else:
 				result[i] = cmd_data
 				finish[i] = True
-	else:
-		call_command_list = command_list
 
 	data_list = ssrpgif.multi_call(call_command_list)
 
@@ -115,7 +99,12 @@ def multi_call(command_list:list, check_cache:bool=False):
 			continue
 
 		result[index] = data
-		set_cache(data, command_to_cache_index(**command_list[index]))
+
+		cache_index = command_to_cache_index(**command_list[index])
+		if not is_preload: 
+			add_preload_index(cache_index)
+		set_cache(data, cache_index)
+
 
 	return result
 
