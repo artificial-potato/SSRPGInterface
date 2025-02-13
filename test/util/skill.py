@@ -1,10 +1,14 @@
 from SSRPGInterface.commands import *
 from .weaper import *
 
+def skill_can_use(name):
+	return item.GetCooldown(name) <= 0 and item.CanActivate()
+
+
+
 def blade_skill():
-	if item.GetCooldown("blade") <= 0 \
-	and foe.distance() <= 23 \
-	and item.CanActivate():
+	if skill_can_use("blade") \
+	and foe.distance() <= 23:
 		select_equipT("blade")
 		command.Equip("blade")
 		command.Activate("R")
@@ -12,9 +16,8 @@ def blade_skill():
 	return False
 
 def blade_skill_screenMove():
-	if item.GetCooldown("blade") <= 0 \
-	and foe.distance() <= 23 \
-	and item.CanActivate():
+	if skill_can_use("blade") \
+	and foe.distance() <= 23:
 		screen.Next() 
 		
 		if screen.x == screen.i * 69 + 55:
@@ -24,8 +27,7 @@ def blade_skill_screenMove():
 	return False
 
 def mask_skill():
-	if item.CanActivate() \
-	and item.GetCooldown("mask") <= 0 \
+	if skill_can_use("mask") \
 	and foe.distance() < 24:
 		select_equipT("mask")
 		command.EquipR("mask")
@@ -36,8 +38,7 @@ def mask_skill():
 def arm_skill():
 	if "pick_pocket" in buffs.string() \
 	and foe.distance() > 3 and foe.distance() < 9 \
-	and item.GetCooldown("skeleton_arm") <= 0 \
-	and item.CanActivate():
+	and skill_can_use("skeleton_arm"):
 		select_equipT("skeleton_arm")
 		command.Equip("skeleton_arm")
 		command.Activate("R")
@@ -45,10 +46,9 @@ def arm_skill():
 	return False
 
 def hammer_skill(weaper:str=heavy):
-	if (item.CanActivate() \
-	and item.GetCooldown("heavy_hammer") <= 0 \
+	if (skill_can_use("heavy_hammer") \
 	and foe.distance() <= 23) \
-	or ("heavy" in item.right() and item.right.state() == 2):
+	or R_in_use("heavy"):
 		select_equipT(weaper)
 		command.Equip(weaper)
 		command.Activate("R")
@@ -56,10 +56,9 @@ def hammer_skill(weaper:str=heavy):
 	return False
 
 def bardiche_skill(weaper:str=bardiche):
-	if (item.CanActivate() \
-	and item.GetCooldown("bardiche") <= 0 \
+	if (skill_can_use("bardiche") \
 	and foe.distance() <= 10) \
-	or ("bardiche" in item.right() and item.right.state() == 2):
+	or R_in_use("bardiche"):
 		select_equipT(weaper)
 		command.Equip(weaper)
 		command.Activate("R")
@@ -67,8 +66,7 @@ def bardiche_skill(weaper:str=bardiche):
 	return False
 
 def quarterstaff_skill():
-	if item.GetCooldown("quarterstaff") <= 0 \
-	and item.CanActivate():
+	if skill_can_use("quarterstaff"):
 		select_equipT("quarterstaff")
 		command.Equip("quarterstaff")
 		command.Activate("R")
@@ -76,15 +74,13 @@ def quarterstaff_skill():
 	return False
 
 def dash_skill():
-	if item.GetCooldown("dash") <= 0 \
-	and item.CanActivate():
+	if skill_can_use("dash"):
 		select_equip("trisk", "dash")
 		return True
 	return False
 
 def bash_skill():
-	if item.GetCooldown("bash") <= 0 \
-	and item.CanActivate():
+	if skill_can_use("bash"):
 		select_equip("trisk", "bash")
 		return True
 	return False
@@ -104,15 +100,15 @@ def sprint(lost:bool=False):
 
 
 def mind_skill():
-	if item.GetCooldown("mind") <= 0:
+	if skill_can_use("mind"):
 		select_equip("quest", "mind")
 		return True
 	return False
 
 def fire_talisman_skill():
 	if summon.GetId() != "cinderwisp" \
-	and (item.CanActivate() and item.GetCooldown("fire_talisman") <= 0 \
-	or "fire_talisman" in item.right() and item.right.state() == 2):
+	and skill_can_use("fire_talisman") \
+	or R_in_use("fire_talisman"):
 		select_equip("trisk", "fire_talisman")
 		command.EquipL("trisk")
 		command.EquipR("fire_talisman")
@@ -133,9 +129,9 @@ def cinderwisp_skill():
 
 
 def aether_talisman_skill():
-	if (summon.GetId() != "voidweaver" \
-	and item.CanActivate() and item.GetCooldown("aether_talisman") <= 0) \
-	or ("aether_talisman" in item.right() and item.right.state() == 2):
+	if summon.GetId() != "voidweaver" \
+	and skill_can_use("aether_talisman") \
+	or R_in_use("aether_talisman"):
 		select_equip("trisk", "aether_talisman")
 		command.EquipL("trisk")
 		command.EquipR("aether_talisman")

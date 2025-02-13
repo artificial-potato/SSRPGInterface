@@ -11,9 +11,8 @@ def need_poison():
 
 
 def need_ice_count(n):
-	return \
-		foe.debuffs.GetCount("debuff_chill") < n or \
-		foe.debuffs.GetTime("debuff_chill") <= 10
+	return foe.debuffs.GetCount("debuff_chill") < n \
+	or foe.debuffs.GetTime("debuff_chill") <= 10
 
 def need_ice():
 	return need_ice_count(6)

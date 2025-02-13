@@ -6,16 +6,17 @@ Released under the MIT license
 Copyright 2025 ArtificialPotato and contributors
 https://github.com/artificial-potato/SSRPGInterface/blob/main/LICENSE
 """
+
 import socket
-import atexit
+from atexit import register
 from sys import stdout
 from time import sleep
 
-ACK_VER = '\x06' + "0.1"
 DELIMITER = "\x1f"
+ACK = "\x06"
+API_VERSION = "0.1"
 
 Game_Version:str = None
-Token = None
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client.settimeout(10)
@@ -78,21 +79,24 @@ def call_command(name:str, *args):
     """
     Send a command to SSRPG.
     """
+
     # if len(args) == 1 and type(args[0]) == list:
     #     args = args[0]
     send(["1", name] + list(args))
-    data = recv()
-    if data[2:] != "cmd_done":
+    data = recv().split(DELIMITER)[1:]
+    if data[0] != "cmd_done":
         print(f"command error. name:{name}, args:{args}")
 
 def multi_call_command(command_list:list[dict]):
-    send_str_list = [str(len(command_list))]
+    length = len(command_list)
+    send_str_list = [str(length)]
     for command in command_list:
         send_str_list += [command["name"]] + list(command["args"])
+
     send(send_str_list)
     data = recv()
     result_list = data.split(DELIMITER)[1:]
-    for i in range(len(result_list)):
+    for i in range(length):
         if result_list[i] != "cmd_done":
             name, args = command_list[i].items()
             print(f"command error. name:{name}, args:{args}")
@@ -150,7 +154,6 @@ def connect(host="127.0.0.1", port=64649):
         print("\r", end="")
         try:
             client.connect((host, port))
-            print("\rConnect Success")
             break
         except TimeoutError:
             print("\rConnect Timeout", end="")
@@ -162,13 +165,29 @@ def connect(host="127.0.0.1", port=64649):
             print(".", end="")
             stdout.flush()
             sleep(1)
+
+    register(close)
+    print("\rConnect Success")
     return True
 
 def check_header() -> bool:
     data = recv(256)
-    if '\x06' in data:
-        if ACK_VER != data:
+    if data and data[0] == ACK:
+        data = data[1:].split(DELIMITER)
+        if data[0] != API_VERSION:
             print("Warning: version mismatch")
+        # Game_Version = data[1]
+        return True
+    else:
+        print("error")
+        return False
+    
+def check_response() -> bool:
+    data = recv(256)
+    if data and data[0] == ACK:
+        # match data[1:]:
+        #     case _:
+        #         pass
         return True
     else:
         print("error")
@@ -192,8 +211,6 @@ def run(step):
 
     from .cache import preload, run_command
 
-    atexit.register(close)
-
     if check_header():
         while True:
             preload()
@@ -201,12 +218,6 @@ def run(step):
             run_command()
             send_eof()
 
-            data = recv(256)
-            if data[0] == '\x06':
-                continue
-                match data[1:]:
-                    case _:
-                        pass
-            else:
+            if not check_response():
                 break
     # exit()

@@ -1,7 +1,7 @@
 from SSRPGInterface.commands import *
-from .boss import bossStart
+from .boss import boss_start
 
-Potion_Type = [
+POTION_TYPE = [
 	"Empty",
 	"Lucky",
 	"Berserk",
@@ -15,7 +15,7 @@ Potion_Type = [
 	"Experience",
 ]
 
-Potion_Formula = {
+POTION_FORMULA = {
 	"Lucky":		("stone", "bronze"),
 	"Berserk":		("wood", "bronze"),
 	"Vampiric":		("tar", "bronze"),
@@ -28,7 +28,7 @@ Potion_Formula = {
 	"Experience":	("wood",),
 }
 
-Potion_Buff = {
+POTION_BUFF = {
 	"Lucky":		"lucky_crit",
 	"Berserk":		"berserk",
 	"Vampiric":		"vampiric",
@@ -36,18 +36,20 @@ Potion_Buff = {
 	"Invisibility":	"invisibility",
 	"Experience":	"experience",
 	# "Cleansing":	None,
-	# "Defensive":		None,
+	# "Defensive":	None,
 	# "Healing":		None,
 	# "Lightning":	None,
 }
 
 
 def name_correction(name):
-	if name in Potion_Type:
+	potion_type = POTION_TYPE
+	if name in potion_type:
 		return name
 	else:
-		for potion in Potion_Type:
-			if name.lower() == potion.lower():
+		name_lower = name.lower()
+		for potion in potion_type:
+			if name_lower == potion.lower():
 				print(f'unexist "{name}" Potion, did you mean "{potion}"?')
 				return potion
 	return None
@@ -55,22 +57,33 @@ def name_correction(name):
 def brew_potion(name:str):
 	name = name_correction(name)
 	if name:
-		command.Brew(*Potion_Formula[name])
+		command.Brew(*POTION_FORMULA[name])
 
 StackPotion = False
 def check_StackPotion(needStackPotion=True):
-	global StackPotion
-	StackPotion = needStackPotion and \
-	(loc.averageTime() < 0 or get_potion_time() < loc.averageTime())
+	set_StackPotion(
+		needStackPotion and
+		(loc.averageTime() < 0 or
+   		get_potion_time() < loc.averageTime())
+	)
+
+def get_StackPotion() -> bool:
 	return StackPotion
+
+def set_StackPotion(value:bool):
+	global StackPotion
+	StackPotion = value
 
 def get_potion_type(name:str=None):
 	potion = item.potion()
+
 	if name:
 		name = name_correction(name)
 		if not name is None:
 			return name in potion
-	for pt in Potion_Type:
+
+	potion_type = POTION_TYPE
+	for pt in potion_type:
 		if pt in potion:
 			return pt
 	return None
@@ -78,15 +91,16 @@ def get_potion_type(name:str=None):
 
 def useStackPotion():
 	if not get_potion_type("Empty") and \
-	(("star" in item.right() and bossStart) \
+	(("star" in item.right() and boss_start) \
 	or StackPotion):
 		command.Activate("potion")
 		return True
 	return False
 	
 def get_potion_time():
-	for potion in Potion_Buff:
-		buff_time = buffs.GetTime(Potion_Buff[potion])
+	pb = POTION_BUFF
+	for potion, buff in pb.items():
+		buff_time = buffs.GetTime(buff)
 		if buff_time:
 			return buff_time
 	return 0

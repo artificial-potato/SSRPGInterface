@@ -1,25 +1,27 @@
 from SSRPGInterface.commands import *
 from .buff import ice_effect
 
-bossStart = False
+boss_start = False
 
 def set_bossStart(value:bool):
-	global bossStart
-	bossStart = value
+	global boss_start
+	boss_start = value
 
 
 
-attackLoop = -1
+attack_loop = -1
+
+def set_attack_loop(value:int):
+	global attack_loop
+	attack_loop = value
 
 def reset_attack_loop():
-	attackLoop = -1
-	return attackLoop
+	set_attack_loop(-1)
 
+def next_attack_loop(loop_count):
+	set_attack_loop((attack_loop + 1) % loop_count)
 
-def next_attack_loop(loopCount):
-	attackLoop = (attackLoop + 1) % loopCount
-	return attackLoop
 
 
 def timing(s, t):
-	return foe.state == s and foe.time >= t + ice_effect()
+	return foe.state() == s and foe.time() >= t + ice_effect()

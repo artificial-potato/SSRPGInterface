@@ -13,14 +13,14 @@ cache_dict = {}
 def get_cache(key):
 	return cache_dict.get(key, None)
 
-def set_cache(data, key):
+def set_cache(key, data):
 	cache_dict[key] = data
 
 
 
-preload_index = []
-keep_preload_index = []
-exclude_preload_index = []
+preload_index:set[tuple] = set()
+keep_preload_index:set[tuple] = set()
+exclude_preload_index:set[tuple] = set()
 
 def preload():
 	cache_dict.clear()
@@ -31,20 +31,15 @@ def preload():
 			"args": index[1: -1],
 			"return_type": index[-1]
 		}
-		for index in keep_preload_index + preload_index
+		for index in keep_preload_index | preload_index
 	]
 	multi_call(command_list)
 
 	preload_index.clear()
 
-def add_preload_index(index):
-	if index in preload_index:
-		return
-	if index in keep_preload_index:
-		return
-	if index in exclude_preload_index:
-		return
-	preload_index.append(index)
+def add_preload_index(index:tuple):
+	if not index in exclude_preload_index:
+		preload_index.add(index)
 
 def command_to_cache_index(name:str, args:list|tuple, return_type=None):
 	return (name,) + tuple(args) + (return_type,)
@@ -63,11 +58,11 @@ def call(name:str, *args, return_type=None):
 	
 	if not data is None:
 		add_preload_index(cache_index)
-	set_cache(data, cache_index)
+	set_cache(cache_index, data)
 
 	return data
 
-def multi_call(command_list:list, is_preload:bool=True):
+def multi_call(command_list:list, is_preload:bool=True) -> list[str|int|bool|None]:
 	list_length = len(command_list)
 	finish = [False] * list_length
 	result = [None] * list_length
@@ -103,8 +98,7 @@ def multi_call(command_list:list, is_preload:bool=True):
 		cache_index = command_to_cache_index(**command_list[index])
 		if not is_preload: 
 			add_preload_index(cache_index)
-		set_cache(data, cache_index)
-
+		set_cache(cache_index, data)
 
 	return result
 
