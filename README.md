@@ -5,8 +5,9 @@ SSRPGInterface is a Python interface for SSRPG (4.9.1 or above).
 
 by: ArtificialPotato (Discord @artificial.potato)
 
-
+## demo
 https://github.com/user-attachments/assets/e0e0cc8f-4d13-4915-849d-6b7e3069729e
+
 https://github.com/user-attachments/assets/2edeeba0-f622-437e-bafe-45b5ba1201ee
 
 
