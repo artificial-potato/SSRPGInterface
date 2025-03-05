@@ -7,6 +7,8 @@ by: ArtificialPotato (Discord @artificial.potato)
 
 
 https://github.com/user-attachments/assets/e0e0cc8f-4d13-4915-849d-6b7e3069729e
+https://github.com/user-attachments/assets/2edeeba0-f622-437e-bafe-45b5ba1201ee
+
 
 
 ## Tested Environment
@@ -92,6 +94,7 @@ foe, loc, foe_debuff, symbol11 = ssrpg.multi_call([["foe"],["loc"],["foe.debuffs
 - Protocols and interfaces are experimental and subject to change.
 
 ## To-do list for this project (SSRPG side and interface side mixed)
+- [ ] Merge pull requests (scheduled for first half of April, thanks xx!)
 - [ ] Improvement and documentation of the protocol
 - [ ] Support for simultaneous use with stonescript
 - [ ] Support for communication with non-loopbacks
