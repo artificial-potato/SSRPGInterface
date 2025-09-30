@@ -218,7 +218,7 @@ class _MindConnectClient:
                         parts.extend(['i', str(arg)])
                     else:
                         parts.extend(['s', str(arg)])
-        print(parts)
+        #print(parts)
         return '\x1f'.join(parts).encode('utf-8')
 
     def send_request(self, requests):
