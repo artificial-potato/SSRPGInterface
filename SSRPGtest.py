@@ -41,7 +41,7 @@ def test_step(context):
         ssrpg.var["mode"]="heal"
         
         # Equip different items based on the foe type
-        if "boss" in (current_foe or ""):
+        if "boss" in current_foe:
             ssrpg.command.EquipR("sword")
             ssrpg.command.EquipL("hammer")
             ssrpg.loc.Pause()

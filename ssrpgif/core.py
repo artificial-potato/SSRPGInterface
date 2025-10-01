@@ -109,7 +109,7 @@ class SSRPGInterface:
                 self._client.send_eof()
 
     def _sloppy_cast(self, s, target_type=None):
-        if s is None or s == "": return None
+        if s is None: return None
         if target_type is bool: return s == 'True'
         if target_type is int:
             if s.startswith('-') and s[1:].isdigit(): return int(s)
