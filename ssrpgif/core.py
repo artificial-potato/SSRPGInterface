@@ -21,7 +21,7 @@ class SSRPGInterface:
         self._async_callbacks = {}
 
         # --- Integrated features ---
-        self.cache = _CacheManager(self)
+        self.cache = {}
         
         self.command = commands.command.Command(self)
         #commands
@@ -124,13 +124,13 @@ class SSRPGInterface:
 
     def call(self, command, *args, return_type=None):
         key = (command,) + args
-        if key in self.cache._cache_dict:
-            return self.cache._cache_dict[key]
+        if key in self.cache:
+            return self.cache[key]
 
         response = self._client.send_and_receive_sync([[command] + list(args)])
         result = response[0] if response else None
         
-        self.cache._cache_dict[key] = result
+        self.cache[key] = result
         return result
 
     def call_async(self, requests, callback):
@@ -315,11 +315,3 @@ class _MindConnectClient:
             except socket.error:
                 break
         self._running = False
-
-class _CacheManager:
-    def __init__(self, interface_instance):
-        self._if = interface_instance
-        self._cache_dict = {}
-
-    def clear(self):
-        self._cache_dict.clear()
