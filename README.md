@@ -158,6 +158,10 @@ These objects are properties of the `ssrpg` instance and contain methods to retr
   * **`ssrpg.player`**: Information about the player.
       * `ssrpg.player.name()`: Returns the player's name.
       * and more
+  * **`ssrpg.var`**: Access to Stonescript's `var` dictionary.
+      * `ssrpg.var["my_variable"]` : Gets a value of `my_variable` on stonescript
+      * `ssrpg.var["my_variable"] = "new_value"` : Sets a value of `my_variable` on stonescript
+      * `"my_variable" in ssrpg.var` : `True` if `my_variable` exists on stonescript
   * **Top-Level Variables**:
       * `ssrpg.hp()`: Returns current player health.
       * `ssrpg.time()`: Returns the time elapsed in the current location.
