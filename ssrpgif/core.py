@@ -1,3 +1,11 @@
+"""
+SSRPGInterface Python Library v0.3
+(for MindConnectProtocol v0.3)
+
+Released under the MIT license
+Copyright 2025 ArtificialPotato and contributors
+https://github.com/artificial-potato/SSRPGInterface/blob/main/LICENSE
+"""
 import socket
 import threading
 import re
