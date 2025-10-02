@@ -1,105 +1,210 @@
-
 # SSRPGInterface
 
-SSRPGInterface is a Python interface for SSRPG (4.9.1 or above).
+SSRPGInterface is a Python interface for StoneStory RPG (v4.9.1 or above), enabling you to interact with the game using Python scripts.
 
 by: ArtificialPotato (Discord @artificial.potato)
 
-## demo
+## Demo
 https://github.com/user-attachments/assets/e0e0cc8f-4d13-4915-849d-6b7e3069729e
 
 https://github.com/user-attachments/assets/2edeeba0-f622-437e-bafe-45b5ba1201ee
 
-
-
 ## Tested Environment
 
-- Python 3.10.7 (win32)
+  * Python 3.13.5 (win32)
 
-## Files
+## Features
 
-- **ssrpgif.py**: Main script (module) for the interface.
-- **SSRPGtest.py**: A script to test communication.
+  * **High-Level API:** An intuitive, object-oriented API that mirrors in-game variables and functions (e.g., `ssrpg.foe.name()`, `ssrpg.player.hp()`).
+  * **Command Queueing:** Automatically queues and sends commands at the end of each game step, simplifying your script logic.
+  * **Multiple Operation Modes:**
+      * `sync`: Run your Python script alongside an in-game Stonescript.
+      * `exclusive`: Your Python script takes full control of the game logic.
+  * **Automatic Caching:** Caches the results of function calls within a single game step to improve performance and avoid redundant requests.
 
-## How to Use the Example (SSRPGtest.py)
+## How to Use
 
-1. Launch SSRPG (4.9.1 or above).
-2. Enable mindstone, erase all, and put `sys.MindConnect()`.
-3. Go to some location.
-4. Run the script: `python SSRPGtest.py`.
+1.  Launch StoneStory RPG (v4.2x.x or above).
+2.  Enable the mindstone and add `//MindConnect: [mode]` for the very first line. [mode] can be `sync` or `exclusive`.
+3.  Enter any location in the game.
+4.  Run your Python script (e.g., `python your_script.py`).
 
 ## Writing Custom Scripts
 
-Use the `SSRPGInterface` class to communicate with SSRPG. Refer to `SSRPGtest.py` for usage examples.
+To communicate with StoneStory RPG, you'll use the `SSRPGInterface` class. This library offers both a high-level API for ease of use and a low-level API for more direct control.
 
-### SSRPGInterface Class
+### Tutorial: Using the High-Level API with Sync Mode
 
-#### Constructor
+The recommended way to write scripts is by using the high-level API in `sync` mode. This mode runs your Python script alongside an in-game Stonescript, allowing you to react to the game in real-time. The `SSRPGtest.py` file provides an example.
+
+Let's break down how it works.
+
+**1. Initialize the Interface**
+
+First, import the library and create an instance of `SSRPGInterface`. The `mode='sync'` argument is key here.
 
 ```python
-from ssrpgif import SSRPGInterface
-ssrpg = SSRPGInterface()
+import ssrpgif
+import time
+
+# Initialize the SSRPGInterface for v0.3 in 'sync' mode
+ssrpg = ssrpgif.SSRPGInterface(mode='sync')
 ```
 
-#### step
-Field to store your custom program to run every frame.
-Assign a function to be executed at each step.
+**2. Define a Step Function**
+
+In `sync` mode, the game sends signals to your script every frame. Your script needs a "step function" to handle these signals. This function will receive a `context` string, which can be `'pre'` (before the in-game script runs) or `'post'` (after the in-game script runs).
+
+You can decide whether your logic should execute before or after the game's own script on that frame.
 
 ```python
-def teststep():
-    ssrpg.call_command("equip", "arm")
+# It's better to manage state outside the library instance.
+y_pos = 0
 
-ssrpg.step = teststep
+def test_step(context):
+    global y_pos
+    
+    # We can choose to act before ('pre') or after ('post') the in-game script.
+    # In this example, all logic is handled in the 'pre' step.
+    if context == 'pre':
+        # --- Your game logic goes here ---
+        
+        # Check if we are at the beginning of a location
+        if ssrpg.loc.begin():
+            y_pos = 0
+            # Queue a command to be sent at the end of the step
+            ssrpg.brew("tar", "wood")
+        
+        # Update a variable and print to the screen
+        y_pos = (y_pos + 1) % 30
+        ssrpg.print(f"hello python!{time.ctime()}", x=1, y=y_pos) # High-level print command
+        
+        # Get information about the current foe
+        current_foe = ssrpg.foe()
+        foe_distance = ssrpg.foe.distance()
+        print(f"Foe: {current_foe}, Distance: {foe_distance}")
+        
+        # Equip different items based on the foe
+        if "boss" in current_foe:
+            ssrpg.equipR("sword") # High-level equip command
+            ssrpg.equipL("hammer")
+            ssrpg.loc.Pause()
+        else:
+            ssrpg.equip("arm")
+            # Activate an item if conditions are met
+            if foe_distance is not None and foe_distance < 8 and ssrpg.item.CanActivate("skeleton_arm"):
+                ssrpg.activate("R") # High-level activate command
 ```
 
-#### run()
+**3. Connect and Run the Main Loop**
 
-Execute the `step()` method in a loop and start communication with SSRPG.
+Finally, the main part of your script connects to the game and enters a loop, calling `ssrpg.step()` repeatedly. This method waits for signals from the game and executes your step function accordingly.
 
 ```python
-ssrpg.run()
+if __name__ == "__main__":
+    try:
+        print("Connecting to StoneStory RPG in SYNC mode...")
+        ssrpg.connect()
+        print("Connection successful. Starting loop... (Press Ctrl+C to stop)")
+        
+        while True:
+            # In sync mode, step() calls your function for 'pre' and 'post' contexts.
+            ssrpg.step(test_step)
+            
+    except ConnectionError as e:
+        print(f"\nConnection failed or was lost: {e}")
+    except KeyboardInterrupt:
+        print("\nScript stopped by user.")
+    finally:
+        print("Disconnecting...")
+        ssrpg.disconnect()
 ```
 
-#### call_command(str command, str parameter)
+-----
 
-Execute a command in StoneScript.
+## High-Level API Manual
 
-Valid commands are as follows:
-`{ ">" , "play" , "equipR" , "equipL", "equip", "loadout", "activate", "enable", "disable", "brew"}`
+The high-level API provides an intuitive, object-oriented way to interact with game elements. All game-state calls are cached per frame, so you can call them multiple times without performance loss. Commands are automatically queued and sent at the end of each step.
+
+### Command Functions
+
+These are direct methods of the `ssrpg = ssrpgif.SSRPGInterface(mode='sync')` object for queueing common commands.
+
+  * `ssrpg.print(text, [x, y, ...])`: Prints text to the screen.
+  * `ssrpg.equip("item_name")`: Equips an item to the best hand.
+  * `ssrpg.equipL("item_name")`: Equips an item to the left hand.
+  * `ssrpg.equipR("item_name")`: Equips an item to the right hand.
+  * `ssrpg.activate("R")` or `ssrpg.activate("L")`: Activates the right or left item.
+  * `ssrpg.brew("mat1", "mat2")`: Brews a potion.
+
+### Game State Objects
+
+These objects are properties of the `ssrpg` instance and contain methods to retrieve information about the game.
+
+  * **`ssrpg.loc`**: Information about the current location.
+      * `ssrpg.loc()`: Returns the location's name.
+      * `ssrpg.loc.begin()`: Returns `True` at the start of a location.
+      * `ssrpg.loc.isQuest()`: Returns `True` if the location is a quest.
+      * and more
+  * **`ssrpg.foe`**: Information about the current enemy.
+      * `ssrpg.foe()`: Returns the foe's name.
+      * `ssrpg.foe.distance()`: Returns the distance to the foe.
+      * `ssrpg.foe.hp()`: Returns the foe's current health.
+      * and more
+  * **`ssrpg.item`**: Information about your items.
+      * `ssrpg.item.GetCooldown("item_name")`: Returns the cooldown time for an item.
+      * `ssrpg.item.CanActivate("item_name")`: Checks if an item can be activated.
+      * and more...
+  * **`ssrpg.player`**: Information about the player.
+      * `ssrpg.player.name()`: Returns the player's name.
+      * and more
+  * **Top-Level Variables**:
+      * `ssrpg.hp()`: Returns current player health.
+      * `ssrpg.time()`: Returns the time elapsed in the current location.
+      * and more
+
+This is just a sample. You can explore the `ssrpgif/commands/` directory and `ssrpgif/core.py` to see all available classes and methods.
+
+
+## Low-Level API (for advanced users)
+
+For maximum flexibility, you can bypass the high-level API and use the low-level functions.
+
+#### `call(str variable_or_function, [param1, param2, ...])`
+
+Gets a variable or executes a function in StoneScript. Return values are automatically converted to `bool`, `int`, or `str`.
 
 ```python
-ssrpg.call_command(">", "hello python!")
+# Get the foe's name
+foe_name = ssrpg.call("foe.name")
+
+# Get a symbol from the screen
+symbol = ssrpg.call("draw.GetSymbol", 10, 5)
 ```
 
-#### call(str variable/function[, parameter1, parameter2,...])
+#### `multi_call([[str var1/func1, ...], [str var2/func2, ...], ...])`
 
-Get a variable or execute a function in StoneScript. Return values are automatically converted to appropriate Python types (`bool`, `int` or `str`).
-
-```python
-foe = ssrpg.call("foe")
-symbol = ssrpg.call("draw.GetSymbol", 1, 1)
-```
-
-#### multi_call([[str var1/func1,...],[str var2/func2,...],...])
-
-Get multiple variables or execute multiple functions in StoneScript. Return values are lists of `str`.
+Executes multiple calls in a single request for efficiency. Returns a list of strings.
 
 ```python
-foe, loc, foe_debuff, symbol11 = ssrpg.multi_call([["foe"],["loc"],["foe.debuffs.string"],["draw.GetSymbol", 1, 1]])
+results = ssrpg.multi_call([
+    ["foe.name"],
+    ["loc.id"],
+    ["draw.GetSymbol", 10, 5]
+])
+# results -> ['Wound Licker', 'caustic_caves', '-']
 ```
 
 ## Limitations
 
-- Cannot use StoneScriptObjects like `ui.panel`.
-- Cannot be used simultaneously with StoneScript.
-- Protocols and interfaces are experimental and subject to change.
+  * Cannot use StoneScript objects like `ui.panel`.
+  * MindConnect cannot be used on imported scripts
+  * Protocols and interfaces are experimental and subject to change.
 
-## To-do list for this project (SSRPG side and interface side mixed)
-- [ ] Merge pull requests (scheduled for first half of April, thanks xx!)
-- [ ] Improvement and documentation of the protocol
-- [ ] Support for simultaneous use with stonescript
-- [ ] Support for communication with non-loopbacks
-- [ ] Easy-to-use aliases for commands (like SSRPGInterface.print(str), SSRPGInterface.equip(str), ...)
-- [ ] Update README.md
-- [ ] Support for types other than int, bool, str
-- [ ] Create interfaces for other languages (if strongly requested)
+## To-Do List
+
+  - [ ] Improvement and documentation of the protocol
+  - [ ] Support for communication with non-loopbacks
+  - [ ] Support for types other than int, bool, str
+  - [ ] Create interfaces for other languages (if strongly requested)
+  - [ ] Support for imported scripts (if strongly requested)
