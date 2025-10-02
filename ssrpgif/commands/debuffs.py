@@ -1,8 +1,8 @@
 from .base import Base
 
 class Debuffs(Base):
-    def __init__(self,interface_instance):
-        super().__init__(interface_instance,"debuffs")
+    def __init__(self,interface_instance, stonescript_class_name="debuffs"):
+        super().__init__(interface_instance, stonescript_class_name)
 
     def count(self) -> int:
         return self._call("count", return_type=int)
