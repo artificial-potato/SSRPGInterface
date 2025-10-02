@@ -37,7 +37,9 @@ class SSRPGInterface:
         self.brew=self.command.Brew
         #
         self.ai = commands.ai.AI(self)
-        self.character = commands.character.Character(self)
+        #self.character = commands.character.Character(self)
+        self.buffs = commands.buffs.Buffs(self)
+        self.debuffs = commands.debuffs.Debuffs(self)
         self.draw = commands.draw.Draw(self)
         self.encounter = commands.encounter.Encounter(self)
         self.event = commands.event.Event(self)

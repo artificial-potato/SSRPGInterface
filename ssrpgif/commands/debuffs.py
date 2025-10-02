@@ -1,9 +1,9 @@
 from .base import Base
 
-class Buffs(Base):
+class Debuffs(Base):
     def __init__(self,interface_instance):
-        super().__init__(interface_instance,"buffs")
-    
+        super().__init__(interface_instance,"debuffs")
+
     def count(self) -> int:
         return self._call("count", return_type=int)
 
