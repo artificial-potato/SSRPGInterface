@@ -6,6 +6,8 @@ by: ArtificialPotato (Discord @artificial.potato)
 
 ## Demo
 
+https://github.com/user-attachments/assets/1c2b4b7f-d8e5-46a2-a9fc-accac7f8782a
+
 https://github.com/user-attachments/assets/2edeeba0-f622-437e-bafe-45b5ba1201ee
 
 ## Tested Environment
