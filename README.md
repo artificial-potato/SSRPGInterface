@@ -1,6 +1,6 @@
 # SSRPGInterface
 
-SSRPGInterface is a Python interface for StoneStory RPG (v4.9.1 or above), enabling you to interact with the game using Python scripts.
+SSRPGInterface is a Python interface for StoneStory RPG (v4.25.0 or above), enabling you to interact with the game using Python scripts.
 
 by: ArtificialPotato (Discord @artificial.potato)
 
