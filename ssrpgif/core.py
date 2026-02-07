@@ -166,7 +166,10 @@ class SSRPGInterface:
         """Retrieves a portion of the game screen as text."""
         requests = [["draw.GetSymbol", x + col, y + row] for row in range(h) for col in range(w)]
         raw_symbols = self.multi_call(requests)
-        return '\n'.join(''.join(raw_symbols[i:i+w]) for i in range(0, len(raw_symbols), w))
+        
+        # Ensure all symbols are strings before joining
+        str_symbols = [str(symbol) for symbol in raw_symbols]
+        return '\n'.join(''.join(str_symbols[i:i+w]) for i in range(0, len(str_symbols), w))
 
 class _MindConnectClient:
     # Internal class handling low-level protocol details.
